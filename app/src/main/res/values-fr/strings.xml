@@ -1,1 +1,5 @@
-<resources></resources>
+<resources>
+    <string name="icon_of_the_app">Icone de l\'applicaiton</string>
+    <string name="login">Se connecter</string>
+    <string name="get_started">S\'inscrire</string>
+</resources>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/app_logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/icon_of_the_app"
+        android:src="@drawable/logo"
+        tools:ignore="ImageContrastCheck" />
+
+    <!-- App Name -->
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/app_name"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="75sp"
+        android:textStyle="bold" />
+
+    <!-- Text "Do your tasks quickly and easy" -->
+    <TextView
+        android:id="@+id/do_tasks_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Button "Get Started" -->
+    <Button
+        android:id="@+id/signup_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:textColor="?attr/colorSecondary"
+        android:background="@drawable/button_primary"
+        android:text="@string/get_started" />
+
+    <!-- Button "Login" -->
+    <Button
+        android:id="@+id/login_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorSecondary"
+        android:background="@drawable/button_primary"
+        android:text="@string/login" />
+
+</LinearLayout>

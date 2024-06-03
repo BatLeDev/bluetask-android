@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name" translatable="false">bluetask</string>
+    <string name="app_name" translatable="false">BlueTask</string>
+    <string name="icon_of_the_app">Icon of the app</string>
+    <string name="login">Login</string>
+    <string name="get_started">Get Started</string>
 </resources>
