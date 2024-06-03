@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "fr.batledev.bluetask"
+    namespace = "com.batledev.bluetask"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "fr.batledev.bluetask"
+        applicationId = "com.batledev.bluetask"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
@@ -36,7 +36,8 @@ android {
 }
 
 dependencies {
-
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation("com.google.firebase:firebase-auth")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
