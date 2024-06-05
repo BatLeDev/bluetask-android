@@ -3,4 +3,11 @@
     <string name="icon_of_the_app">Icon of the app</string>
     <string name="login">Login</string>
     <string name="get_started">Get Started</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_up_with_google">Sign up with Google</string>
+    <string name="ask_already_login">You have already an account? Login now</string>
+    <string name="sign_up_to_bluetask">Sign up to BlueTask</string>
 </resources>
