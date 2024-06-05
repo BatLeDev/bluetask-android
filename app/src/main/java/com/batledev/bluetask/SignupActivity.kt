@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
-private const val RC_SIGN_IN = 9001
+private const val RC_SIGN_UP = 9001
 
 class SignupActivity : AppCompatActivity() {
 
@@ -35,13 +35,13 @@ class SignupActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val data: Intent? = result.data
-                super.onActivityResult(RC_SIGN_IN, result.resultCode, data)
+                super.onActivityResult(RC_SIGN_UP, result.resultCode, data)
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 try {
                     val account = task.getResult(ApiException::class.java)
                     firebaseAuthWithGoogle(account.idToken)
                 } catch (e: ApiException) {
-                    Toast.makeText(this, "Google sign in failed: " + e.message, Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "Google sign up failed: " + e.message, Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -60,7 +60,7 @@ class SignupActivity : AppCompatActivity() {
         signupConfirmPassword = findViewById(R.id.signup_confirm_password)
         val signupBtn = findViewById<Button>(R.id.signup_btn)
         val signupGoogleBtn = findViewById<Button>(R.id.signup_google_btn)
-        val alreadyLoginBtn = findViewById<TextView>(R.id.already_login)
+        val alreadyLoginBtn = findViewById<TextView>(R.id.already_account)
 
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance()
@@ -148,7 +148,7 @@ class SignupActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     Toast.makeText(
                         this,
-                        "Google sign in successful.",
+                        "Google sign up successful.",
                         Toast.LENGTH_SHORT
                     ).show()
                     val user = firebaseAuth.currentUser
@@ -156,7 +156,7 @@ class SignupActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         this,
-                        "Google sign in failed: " + task.exception!!.message,
+                        "Google sign up failed: " + task.exception!!.message,
                         Toast.LENGTH_SHORT
                     ).show()
                 }
