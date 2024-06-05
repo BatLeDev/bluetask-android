@@ -1,4 +1,4 @@
-package com.batledev.bluetask
+package com.batledev.bluetask.authentication
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.batledev.bluetask.R
 
 class UnloggedActivity : AppCompatActivity() {
 
