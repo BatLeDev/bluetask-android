@@ -2,4 +2,10 @@
     <string name="icon_of_the_app">Icone de l\'applicaiton</string>
     <string name="login">Se connecter</string>
     <string name="get_started">S\'inscrire</string>
+    <string name="password">Mot de passe</string>
+    <string name="confirm_password">Confirmation du mot de passe</string>
+    <string name="sign_up">S\'inscrire</string>
+    <string name="sign_up_with_google">S\'inscrire avec google</string>
+    <string name="ask_already_login">Vous avez déjà un compte ? Connectez-vous !</string>
+    <string name="sign_up_to_bluetask">S\'inscrire sur BlueTask</string>
 </resources>
