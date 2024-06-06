@@ -15,4 +15,6 @@
     <string name="add_task">Créer la tâche</string>
     <string name="title">Titre</string>
     <string name="add_color">Couleur de fond</string>
+    <string name="pick_start_date">Date de début</string>
+    <string name="pick_end_date">Date de fin</string>
 </resources>

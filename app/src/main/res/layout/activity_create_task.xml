@@ -20,6 +20,20 @@
         android:hint="@string/description"
         android:inputType="textMultiLine" />
 
+    <!-- Start Date Picker Button -->
+    <Button
+        android:id="@+id/buttonStartDatePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pick_start_date" />
+
+    <!-- End Date Picker Button -->
+    <Button
+        android:id="@+id/buttonEndDatePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pick_end_date" />
+
     <!-- Color Picker -->
     <Button
         android:id="@+id/buttonColorPicker"

@@ -1,5 +1,6 @@
 package com.batledev.bluetask
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -11,6 +12,8 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CreateTaskActivity : AppCompatActivity() {
 
@@ -18,11 +21,15 @@ class CreateTaskActivity : AppCompatActivity() {
     private lateinit var editTextDescription: EditText
     private lateinit var buttonColorPicker: Button
     private lateinit var buttonAddTask: Button
+    private lateinit var buttonStartDatePicker: Button
+    private lateinit var buttonEndDatePicker: Button
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
     private var taskColor: String? = null
+    private var startDate: Date? = null
+    private var endDate: Date? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +40,8 @@ class CreateTaskActivity : AppCompatActivity() {
         editTextDescription = findViewById(R.id.editTextDescription)
         buttonColorPicker = findViewById(R.id.buttonColorPicker)
         buttonAddTask = findViewById(R.id.buttonAddTask)
+        buttonStartDatePicker = findViewById(R.id.buttonStartDatePicker)
+        buttonEndDatePicker = findViewById(R.id.buttonEndDatePicker)
 
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance()
@@ -41,6 +50,48 @@ class CreateTaskActivity : AppCompatActivity() {
         // Set click listeners
         buttonColorPicker.setOnClickListener { showColorPicker() }
         buttonAddTask.setOnClickListener { addTask() }
+        buttonStartDatePicker.setOnClickListener { showStartDatePicker() }
+        buttonEndDatePicker.setOnClickListener { showEndDatePicker() }
+    }
+
+    private fun showStartDatePicker() {
+        val calendar = Calendar.getInstance()
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, monthOfYear, dayOfMonth ->
+                calendar.set(year, monthOfYear, dayOfMonth)
+                startDate = calendar.time
+                buttonStartDatePicker.text =
+                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(startDate!!)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        if (endDate != null) {
+            datePickerDialog.datePicker.maxDate = endDate!!.time
+        }
+        datePickerDialog.show()
+    }
+
+    private fun showEndDatePicker() {
+        val calendar = Calendar.getInstance()
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, monthOfYear, dayOfMonth ->
+                calendar.set(year, monthOfYear, dayOfMonth)
+                endDate = calendar.time
+                buttonEndDatePicker.text =
+                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(endDate!!)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        if (startDate != null) {
+            datePickerDialog.datePicker.minDate = startDate!!.time
+        }
+        datePickerDialog.show()
     }
 
     private fun showColorPicker() {
@@ -49,7 +100,7 @@ class CreateTaskActivity : AppCompatActivity() {
             .setPreferenceName("MyColorPickerDialog")
             .setPositiveButton("Confirm", ColorEnvelopeListener { envelope, _ ->
                 val selectedColor = envelope.color
-                taskColor = "#" + envelope.hexCode
+                taskColor = "#" + envelope.hexCode.substring(2, 8)
                 buttonColorPicker.setBackgroundColor(selectedColor)
             })
             .setNegativeButton("Clear") { dialogInterface, _ ->
@@ -57,7 +108,7 @@ class CreateTaskActivity : AppCompatActivity() {
                 buttonColorPicker.setBackgroundResource(android.R.drawable.btn_default)
                 dialogInterface.dismiss()
             }
-            .attachAlphaSlideBar(false) // Disable the alpha slider
+            .attachAlphaSlideBar(false)
             .attachBrightnessSlideBar(true)
             .setBottomSpace(12)
             .show()
@@ -78,12 +129,12 @@ class CreateTaskActivity : AppCompatActivity() {
             "title" to title,
             "description" to description,
             "color" to taskColor,
-            "endDate" to null,
+            "startDate" to startDate,
+            "endDate" to endDate,
             "labels" to emptyList<String>(),
             "lines" to emptyList<String>(),
             "linesChecked" to emptyList<String>(),
             "priority" to -1,
-            "startDate" to null,
             "state" to -1,
             "status" to "active",
             "createAt" to FieldValue.serverTimestamp()

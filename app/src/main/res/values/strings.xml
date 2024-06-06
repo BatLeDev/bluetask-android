@@ -18,4 +18,6 @@
     <string name="description" translatable="false">Description</string>
     <string name="title">Title</string>
     <string name="add_color">Background color</string>
+    <string name="pick_start_date">Pick Start Date</string>
+    <string name="pick_end_date">Pick End Date</string>
 </resources>
