@@ -14,4 +14,7 @@
     <string name="login_to_bluetask">Login to BlueTask</string>
     <string name="ask_no_account">You don\'t have an account ? Sign up now</string>
     <string name="create_new_task">Create new task</string>
+    <string name="add_task">Add Task</string>
+    <string name="description" translatable="false">Description</string>
+    <string name="title">Title</string>
 </resources>

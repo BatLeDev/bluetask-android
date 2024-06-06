@@ -8,46 +8,23 @@
         android:id="@+id/editTextTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title" />
+        android:autofillHints=""
+        android:hint="@string/title"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/editTextDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description" />
-
-    <!-- Color Picker -->
-    <EditText
-        android:id="@+id/editTextColor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Set Hexa Color" />
-
-    <!-- Priority Spinner -->
-    <Spinner
-        android:id="@+id/spinnerPriority"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <!-- Date Picker for Start Date -->
-    <Button
-        android:id="@+id/buttonStartDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start Date" />
-
-    <!-- Date Picker for End Date -->
-    <Button
-        android:id="@+id/buttonEndDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="End Date" />
+        android:autofillHints=""
+        android:hint="@string/description"
+        android:inputType="textMultiLine" />
 
     <!-- Add Task Button -->
     <Button
         android:id="@+id/buttonAddTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Task" />
+        android:text="@string/add_task" />
 
 </LinearLayout>

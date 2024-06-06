@@ -12,4 +12,6 @@
     <string name="login_to_bluetask">Se connecter à BlueTask</string>
     <string name="ask_no_account">Vous n\'avez pas de compte ? Inscrivez-vous !</string>
     <string name="create_new_task">Créer une nouvelle tâche</string>
+    <string name="add_task">Créer la tâche</string>
+    <string name="title">Titre</string>
 </resources>
