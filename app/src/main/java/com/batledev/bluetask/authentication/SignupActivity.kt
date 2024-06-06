@@ -77,6 +77,7 @@ class SignupActivity : AppCompatActivity() {
         signupGoogleBtn.setOnClickListener { signInWithGoogle() }
         alreadyLoginBtn.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
         }
     }
@@ -168,7 +169,7 @@ class SignupActivity : AppCompatActivity() {
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
             startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            finishAffinity()
         }
     }
 }
