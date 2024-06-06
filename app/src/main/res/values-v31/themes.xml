@@ -9,5 +9,7 @@
         <item name="colorSecondaryVariant">@color/secondary_dark</item>
         <item name="colorBackgroundFloating">@color/background_light</item>
         <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:windowSplashScreenBackground">@color/secondary</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/logo</item>
     </style>
 </resources>

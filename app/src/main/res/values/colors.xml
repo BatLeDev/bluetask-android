@@ -7,6 +7,8 @@
     <color name="low">#4CAF50</color>
     <color name="medium">#FF9800</color>
     <color name="high">#FF5252</color>
+    <color name="background_grey">#212121</color>
+    <color name="background_light">#BFBFBF</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 </resources>
