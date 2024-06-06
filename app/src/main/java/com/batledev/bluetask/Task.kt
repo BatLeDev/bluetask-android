@@ -3,6 +3,7 @@ package com.batledev.bluetask
 import com.google.firebase.Timestamp
 
 data class Task(
+    val id: String = "",
     val color: String? = null,
     val createAt: Timestamp? = null,
     val description: String = "",

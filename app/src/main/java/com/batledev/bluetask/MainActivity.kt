@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         // Swipe to refresh
         swipeRefreshLayout.setOnRefreshListener {
             loadTasks()
-            swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -57,10 +56,12 @@ class MainActivity : AppCompatActivity() {
         tasksRef.get().addOnSuccessListener { documents ->
             tasks.clear()
             for (document in documents) {
-                val task = document.toObject<Task>()
+                val taskId = document.id
+                val task = document.toObject<Task>().copy(id = taskId)
                 tasks.add(task)
             }
             taskAdapter.notifyDataSetChanged()
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 }
