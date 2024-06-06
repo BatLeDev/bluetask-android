@@ -17,4 +17,3 @@ data class Task(
     val status: String = "",
     val title: String = ""
 )
-

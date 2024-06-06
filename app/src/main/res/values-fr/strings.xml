@@ -11,4 +11,5 @@
     <string name="login_with_google">Se connecter avec Google</string>
     <string name="login_to_bluetask">Se connecter à BlueTask</string>
     <string name="ask_no_account">Vous n\'avez pas de compte ? Inscrivez-vous !</string>
+    <string name="create_new_task">Créer une nouvelle tâche</string>
 </resources>

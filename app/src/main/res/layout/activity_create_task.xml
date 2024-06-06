@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Title" />
+
+    <EditText
+        android:id="@+id/editTextDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description" />
+
+    <!-- Color Picker -->
+    <EditText
+        android:id="@+id/editTextColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Hexa Color" />
+
+    <!-- Priority Spinner -->
+    <Spinner
+        android:id="@+id/spinnerPriority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Date Picker for Start Date -->
+    <Button
+        android:id="@+id/buttonStartDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Date" />
+
+    <!-- Date Picker for End Date -->
+    <Button
+        android:id="@+id/buttonEndDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="End Date" />
+
+    <!-- Add Task Button -->
+    <Button
+        android:id="@+id/buttonAddTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Task" />
+
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.batledev.bluetask
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -43,9 +44,14 @@ class MainActivity : AppCompatActivity() {
         // Load tasks
         loadTasks()
 
-        // Swipe to refresh
+        // --------- Listeners ---------
         swipeRefreshLayout.setOnRefreshListener {
             loadTasks()
+        }
+
+        val createTaskButton = findViewById<Button>(R.id.createTaskButton)
+        createTaskButton.setOnClickListener {
+            startActivity(Intent(this, CreateTaskActivity::class.java))
         }
     }
 
