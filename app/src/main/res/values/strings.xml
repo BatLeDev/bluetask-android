@@ -20,4 +20,7 @@
     <string name="add_color">Background color</string>
     <string name="pick_start_date">Pick Start Date</string>
     <string name="pick_end_date">Pick End Date</string>
+    <string name="archive">Archive</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
 </resources>

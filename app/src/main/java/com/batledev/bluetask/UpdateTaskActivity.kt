@@ -2,6 +2,7 @@ package com.batledev.bluetask
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -12,8 +13,8 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import java.text.SimpleDateFormat
@@ -21,12 +22,12 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class CreateTaskActivity : AppCompatActivity() {
+class UpdateTaskActivity : AppCompatActivity() {
 
     private lateinit var editTextTitle: EditText
     private lateinit var editTextDescription: EditText
     private lateinit var buttonColorPicker: Button
-    private lateinit var buttonAddTask: Button
+    private lateinit var buttonUpdate: Button
     private lateinit var buttonStartDatePicker: Button
     private lateinit var buttonEndDatePicker: Button
     private lateinit var spinnerPriority: Spinner
@@ -34,6 +35,7 @@ class CreateTaskActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
+    private var taskId: String? = null
     private var taskColor: String? = null
     private var startDate: Date? = null
     private var endDate: Date? = null
@@ -41,13 +43,13 @@ class CreateTaskActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_task)
+        setContentView(R.layout.activity_update_task)
 
         // Initialize views
         editTextTitle = findViewById(R.id.editTextTitle)
         editTextDescription = findViewById(R.id.editTextDescription)
         buttonColorPicker = findViewById(R.id.buttonColorPicker)
-        buttonAddTask = findViewById(R.id.buttonAddTask)
+        buttonUpdate = findViewById(R.id.buttonUpdate)
         buttonStartDatePicker = findViewById(R.id.buttonStartDatePicker)
         buttonEndDatePicker = findViewById(R.id.buttonEndDatePicker)
         spinnerPriority = findViewById(R.id.spinnerPriority)
@@ -60,7 +62,7 @@ class CreateTaskActivity : AppCompatActivity() {
         buttonColorPicker.setOnClickListener { showColorPicker() }
         buttonStartDatePicker.setOnClickListener { showStartDatePicker() }
         buttonEndDatePicker.setOnClickListener { showEndDatePicker() }
-        buttonAddTask.setOnClickListener { addTask() }
+        buttonUpdate.setOnClickListener { updateTask() }
 
         // Set up priority spinner
         val priorities = arrayOf("No Priority", "High", "Medium", "Low")
@@ -80,6 +82,52 @@ class CreateTaskActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>) {
                 priority = -1
+            }
+        }
+
+        // Get taskId from intent
+        taskId = intent.getStringExtra("TASK_ID")
+        taskId?.let { loadTask(it) }
+    }
+
+    /**
+     * Load task data from Firestore
+     * @param taskId Task ID
+     */
+    private fun loadTask(taskId: String) {
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        val taskRef = firestore.collection("users").document(userId).collection("tasks").document(taskId)
+
+        taskRef.get().addOnSuccessListener { document ->
+            if (document != null) {
+                val task = document.toObject<Task>()
+                task?.let {
+                    // Set variables
+                    taskColor = it.color
+                    startDate = it.startDate?.toDate()
+                    endDate = it.endDate?.toDate()
+                    priority = it.priority
+
+                    // Set elements on the view
+                    editTextTitle.setText(it.title)
+                    editTextDescription.setText(it.description)
+                    taskColor?.let { color ->
+                        buttonColorPicker.setBackgroundColor(Color.parseColor(color))
+                    }
+                    startDate?.let { date ->
+                        buttonStartDatePicker.text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
+                    }
+                    endDate?.let { date ->
+                        buttonEndDatePicker.text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
+                    }
+                    val priorityIndex = when (priority) {
+                        2 -> 1
+                        1 -> 2
+                        0 -> 3
+                        else -> 0
+                    }
+                    spinnerPriority.setSelection(priorityIndex)
+                }
             }
         }
     }
@@ -144,7 +192,7 @@ class CreateTaskActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun addTask() {
+    private fun updateTask() {
         val title = editTextTitle.text.toString().trim()
         val description = editTextDescription.text.toString().trim()
         val userId = firebaseAuth.currentUser!!.uid
@@ -161,25 +209,22 @@ class CreateTaskActivity : AppCompatActivity() {
             "color" to taskColor,
             "startDate" to startDate,
             "endDate" to endDate,
-            "labels" to emptyList<String>(),
-            "lines" to emptyList<String>(),
-            "linesChecked" to emptyList<String>(),
-            "priority" to priority,
-            "state" to -1,
-            "status" to "active",
-            "createAt" to FieldValue.serverTimestamp()
+            "priority" to priority
         )
 
-        firestore.collection("users").document(userId).collection("tasks")
-            .add(task)
-            .addOnSuccessListener { documentReference ->
-                println("Task added with ID: ${documentReference.id}")
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            }
-            .addOnFailureListener { e ->
-                println("Error adding task: $e")
-                Toast.makeText(this, "Error adding task", Toast.LENGTH_SHORT).show()
-            }
+        taskId?.let {
+            firestore.collection("users").document(userId).collection("tasks").document(it)
+                .update(task as Map<String, Any>)
+                .addOnSuccessListener {
+                    println("Task updated successfully")
+                    Toast.makeText(this, "Task updated successfully", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
+                .addOnFailureListener { e ->
+                    println("Error updating task: $e")
+                    Toast.makeText(this, "Error updating task", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 }

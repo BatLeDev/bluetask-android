@@ -1,6 +1,7 @@
 package com.batledev.bluetask
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +38,13 @@ class TaskAdapter(context: Context, tasks: List<Task>) : ArrayAdapter<Task>(cont
 
         if (!task.color.isNullOrEmpty()) {
             cardView.setCardBackgroundColor(Color.parseColor(task.color))
+        }
+
+        // Set listener to open the task when clicked
+        view.setOnClickListener {
+            val intent = Intent(context, UpdateTaskActivity::class.java)
+            intent.putExtra("TASK_ID", task.id)
+            context.startActivity(intent)
         }
 
         return view

@@ -17,4 +17,7 @@
     <string name="add_color">Couleur de fond</string>
     <string name="pick_start_date">Date de début</string>
     <string name="pick_end_date">Date de fin</string>
+    <string name="archive">Archiver</string>
+    <string name="update">Mettre à jour</string>
+    <string name="delete">Supprimer</string>
 </resources>

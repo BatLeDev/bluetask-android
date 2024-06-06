@@ -23,6 +23,7 @@
         <activity android:name=".authentication.LoginActivity" android:parentActivityName=".authentication.UnloggedActivity" />
         <activity android:name=".authentication.SignupActivity" android:parentActivityName=".authentication.UnloggedActivity" />
         <activity android:name=".CreateTaskActivity" />
+        <activity android:name=".UpdateTaskActivity" />
     </application>
 
 </manifest>
