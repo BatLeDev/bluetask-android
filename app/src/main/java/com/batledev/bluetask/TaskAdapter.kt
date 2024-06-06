@@ -15,8 +15,21 @@ class TaskAdapter(context: Context, tasks: List<Task>) : ArrayAdapter<Task>(cont
         val titleTextView = view.findViewById<TextView>(R.id.taskTitle)
         val descriptionTextView = view.findViewById<TextView>(R.id.taskDescription)
 
-        titleTextView.text = task?.title
-        descriptionTextView.text = task?.description
+        // Set the title and description of the task
+        // If the title or description is null or empty, hide the text view
+        if (task == null || task.title.isEmpty()) {
+            titleTextView.visibility = View.GONE
+        } else {
+            titleTextView.visibility = View.VISIBLE
+            titleTextView.text = task.title
+        }
+
+        if (task == null || task.description.isEmpty()) {
+            descriptionTextView.visibility = View.GONE
+        } else {
+            descriptionTextView.visibility = View.VISIBLE
+            descriptionTextView.text = task.description
+        }
 
         return view
     }

@@ -5,7 +5,7 @@ import com.google.firebase.Timestamp
 data class Task(
     val color: String? = null,
     val createAt: Timestamp? = null,
-    val description: String? = "",
+    val description: String = "",
     val endDate: Timestamp? = null,
     val labels: List<String> = emptyList(),
     val lines: List<String> = emptyList(),
