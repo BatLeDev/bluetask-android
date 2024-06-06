@@ -17,4 +17,5 @@
     <string name="add_task">Add Task</string>
     <string name="description" translatable="false">Description</string>
     <string name="title">Title</string>
+    <string name="add_color">Background color</string>
 </resources>

@@ -20,6 +20,13 @@
         android:hint="@string/description"
         android:inputType="textMultiLine" />
 
+    <!-- Color Picker -->
+    <Button
+        android:id="@+id/buttonColorPicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_color" />
+
     <!-- Add Task Button -->
     <Button
         android:id="@+id/buttonAddTask"

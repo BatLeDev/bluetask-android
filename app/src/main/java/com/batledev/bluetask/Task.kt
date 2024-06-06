@@ -14,6 +14,6 @@ data class Task(
     val priority: Int = -1,
     val startDate: Timestamp? = null,
     val state: Int = -1,
-    val status: String = "",
+    val status: String = "active",
     val title: String = ""
 )
