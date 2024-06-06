@@ -20,6 +20,12 @@
         android:hint="@string/description"
         android:inputType="textMultiLine" />
 
+    <!-- Priority Spinner -->
+    <Spinner
+        android:id="@+id/spinnerPriority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <!-- Start Date Picker Button -->
     <Button
         android:id="@+id/buttonStartDatePicker"

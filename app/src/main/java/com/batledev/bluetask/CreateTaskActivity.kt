@@ -3,8 +3,12 @@ package com.batledev.bluetask
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -13,7 +17,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class CreateTaskActivity : AppCompatActivity() {
 
@@ -23,6 +29,7 @@ class CreateTaskActivity : AppCompatActivity() {
     private lateinit var buttonAddTask: Button
     private lateinit var buttonStartDatePicker: Button
     private lateinit var buttonEndDatePicker: Button
+    private lateinit var spinnerPriority: Spinner
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
@@ -30,6 +37,7 @@ class CreateTaskActivity : AppCompatActivity() {
     private var taskColor: String? = null
     private var startDate: Date? = null
     private var endDate: Date? = null
+    private var priority: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +50,7 @@ class CreateTaskActivity : AppCompatActivity() {
         buttonAddTask = findViewById(R.id.buttonAddTask)
         buttonStartDatePicker = findViewById(R.id.buttonStartDatePicker)
         buttonEndDatePicker = findViewById(R.id.buttonEndDatePicker)
+        spinnerPriority = findViewById(R.id.spinnerPriority)
 
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance()
@@ -52,6 +61,27 @@ class CreateTaskActivity : AppCompatActivity() {
         buttonAddTask.setOnClickListener { addTask() }
         buttonStartDatePicker.setOnClickListener { showStartDatePicker() }
         buttonEndDatePicker.setOnClickListener { showEndDatePicker() }
+
+        // Set up priority spinner
+        val priorities = arrayOf("No Priority", "High", "Medium", "Low")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, priorities)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPriority.adapter = adapter
+        spinnerPriority.setSelection(0)
+        spinnerPriority.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                priority = when (position) {
+                    1 -> 2
+                    2 -> 1
+                    3 -> 0
+                    else -> -1
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                priority = -1
+            }
+        }
     }
 
     private fun showStartDatePicker() {
@@ -134,7 +164,7 @@ class CreateTaskActivity : AppCompatActivity() {
             "labels" to emptyList<String>(),
             "lines" to emptyList<String>(),
             "linesChecked" to emptyList<String>(),
-            "priority" to -1,
+            "priority" to priority,
             "state" to -1,
             "status" to "active",
             "createAt" to FieldValue.serverTimestamp()
