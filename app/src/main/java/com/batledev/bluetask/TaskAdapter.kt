@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 
 class TaskAdapter(context: Context, tasks: List<Task>, private val taskActivityLauncher: ActivityResultLauncher<Intent>) : ArrayAdapter<Task>(context, 0, tasks) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

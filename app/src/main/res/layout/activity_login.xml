@@ -76,7 +76,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:clickable="true"
-                android:text="@string/ask_no_account" />
+                android:minHeight="48dp"
+                android:text="@string/ask_no_account"
+                android:gravity="center_vertical" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

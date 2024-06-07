@@ -6,23 +6,25 @@
     <!-- Title -->
     <EditText
         android:id="@+id/editTextTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:autofillHints=""
         android:hint="@string/title"
         android:inputType="text"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="48dp" />
 
     <!-- Description -->
     <EditText
         android:id="@+id/editTextDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:autofillHints=""
         android:hint="@string/description"
         android:inputType="textMultiLine"
         android:layout_below="@id/editTextTitle"
-        android:layout_marginTop="8dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:minHeight="48dp" />
 
     <!-- Priority -->
     <Spinner
@@ -30,7 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextDescription"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp" />
 
     <!-- Start Date Picker -->
     <Button
