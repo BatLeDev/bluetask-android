@@ -48,4 +48,10 @@
     <string name="high">High</string>
     <string name="all">All</string>
     <string name="apply_filters">Apply Filters</string>
+    <string name="menu">Menu</string>
+    <string name="all_tasks">All tasks</string>
+    <string name="trash">Trash</string>
+    <string name="labels">Labels</string>
+    <string name="logout">Logout</string>
+    <string name="about_us">About us</string>
 </resources>
