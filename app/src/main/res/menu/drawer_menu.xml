@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/allTasks"
+        android:title="@string/all_tasks" />
+    <item
+        android:id="@+id/archive"
+        android:title="@string/archive" />
+    <item
+        android:id="@+id/trash"
+        android:title="@string/trash" />
+
+    <item
+        android:id="@+id/labels"
+        android:title="@string/labels">
+        <menu>
+            <item
+                android:id="@+id/editLabels"
+                android:title="@string/edit_labels" />
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/menu_bottom_section">
+        <menu>
+            <item
+                android:id="@+id/logout"
+                android:title="@string/logout" />
+            <item
+                android:id="@+id/aboutUs"
+                android:title="@string/about_us" />
+        </menu>
+    </item>
+</menu>

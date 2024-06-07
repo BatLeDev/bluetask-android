@@ -2,20 +2,25 @@ package com.batledev.bluetask
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.View
 import android.widget.Button
 import android.widget.ListView
 import android.widget.RadioGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.batledev.bluetask.authentication.UnloggedActivity
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 
-class MainActivity : AppCompatActivity()  {
+class MainActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
@@ -26,9 +31,12 @@ class MainActivity : AppCompatActivity()  {
     // Filters
     private var orderBy: String = "createAt"
     private var priority: Int = -1
+    private var label: String = ""
+
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
 
     // Activity launcher for CreateTaskActivity and UpdateTaskActivity
-    // (To refresh the list of tasks after creating a new task)
     private val taskActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             loadTasks()
@@ -60,6 +68,11 @@ class MainActivity : AppCompatActivity()  {
         // Load tasks
         loadTasks()
 
+        // Setup drawer layout and navigation view
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navigationView = findViewById(R.id.navigationView)
+        loadLabelsInNavigationView()
+
         // --------- Listeners ---------
         swipeRefreshLayout.setOnRefreshListener {
             loadTasks()
@@ -74,7 +87,65 @@ class MainActivity : AppCompatActivity()  {
         filtersButton.setOnClickListener {
             showFiltersDialog()
         }
+
+        val menuButton = findViewById<Button>(R.id.menuButton)
+        menuButton.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.allTasks -> {
+                    // Handle All Tasks action
+                }
+                R.id.archive -> {
+                    // Handle Archive action
+                }
+                R.id.trash -> {
+                    // Handle Trash action
+                }
+                R.id.editLabels -> {
+                    // Handle Edit Labels action
+                }
+                R.id.logout -> {
+                    firebaseAuth.signOut()
+                    startActivity(Intent(this, UnloggedActivity::class.java))
+                    finish()
+                }
+                R.id.aboutUs -> {
+                    // Handle About Us action
+                }
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
     }
+
+    private fun loadLabelsInNavigationView() {
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        val userRef = firestore.collection("users").document(userId)
+
+        // Get the labels from the user document
+        userRef.get().addOnSuccessListener { document ->
+            val menu = navigationView.menu
+            val labelsMenu = menu.findItem(R.id.labels).subMenu
+            @Suppress("UNCHECKED_CAST") // It's safe to cast to List<Map<String, String>>
+            val labels = document["labels"] as List<Map<String, String>>
+            labelsMenu?.clear()  // Clear existing items
+
+            // Add labels to the navigation view
+            for (labelMap in labels) {
+                val title = labelMap["title"] ?: ""
+                val menuItem = labelsMenu?.add(Menu.NONE, View.generateViewId(), Menu.NONE, title)
+                menuItem?.setOnMenuItemClickListener {
+                    this.label = title
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+            }
+        }
+    }
+
 
     private fun loadTasks() {
         swipeRefreshLayout.isRefreshing = true
