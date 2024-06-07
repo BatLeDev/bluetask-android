@@ -23,4 +23,18 @@
     <string name="archive">Archive</string>
     <string name="update">Update</string>
     <string name="delete">Delete</string>
+    <string-array name="priorities">
+        <item>No Priority</item>
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+    </string-array>
+    <string name="update_successful">Task updated successfully</string>
+    <string name="update_error">Error updating task</string>
+    <string name="delete_successful">Task deleted successfully</string>
+    <string name="trash_successful">Task moved to trash</string>
+    <string name="archive_successful">Task archived successfully</string>
+    <string name="unarchive_successful">Task unarchived successfully</string>
+    <string name="restore">Restore</string>
+    <string name="unarchive">Unarchive</string>
 </resources>

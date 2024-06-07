@@ -20,4 +20,18 @@
     <string name="archive">Archiver</string>
     <string name="update">Mettre à jour</string>
     <string name="delete">Supprimer</string>
+    <string-array name="priorities">
+        <item>Pas de priorité</item>
+        <item>Haute</item>
+        <item>Moyenne</item>
+        <item>Basse</item>
+    </string-array>
+    <string name="update_successful">Tâche mise à jour</string>
+    <string name="update_error">Erreur lors de la mise à jour</string>
+    <string name="delete_successful">Tâche supprimé</string>
+    <string name="trash_successful">Tâche supprimé</string>
+    <string name="archive_successful">Tâche archivé</string>
+    <string name="unarchive_successful">Tâche desarchivé</string>
+    <string name="restore">Restaurer</string>
+    <string name="unarchive">Desarchiver</string>
 </resources>
