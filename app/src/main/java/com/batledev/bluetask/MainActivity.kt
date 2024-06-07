@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ListView
 import android.widget.RadioGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,6 +27,14 @@ class MainActivity : AppCompatActivity()  {
     private var orderBy: String = "createAt"
     private var priority: Int = -1
 
+    // Activity launcher for CreateTaskActivity and UpdateTaskActivity
+    // (To refresh the list of tasks after creating a new task)
+    private val taskActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            loadTasks()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -45,7 +54,7 @@ class MainActivity : AppCompatActivity()  {
         // Setup ListView
         val listView = findViewById<ListView>(R.id.listViewTasks)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
-        taskAdapter = TaskAdapter(this, tasks)
+        taskAdapter = TaskAdapter(this, tasks, taskActivityLauncher)
         listView.adapter = taskAdapter
 
         // Load tasks
@@ -58,7 +67,7 @@ class MainActivity : AppCompatActivity()  {
 
         val createTaskButton = findViewById<Button>(R.id.createTaskButton)
         createTaskButton.setOnClickListener {
-            startActivity(Intent(this, CreateTaskActivity::class.java))
+            taskActivityLauncher.launch(Intent(this, CreateTaskActivity::class.java))
         }
 
         val filtersButton = findViewById<Button>(R.id.filtersButton)

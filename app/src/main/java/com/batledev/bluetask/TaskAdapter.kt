@@ -8,9 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.cardview.widget.CardView
 
-class TaskAdapter(context: Context, tasks: List<Task>) : ArrayAdapter<Task>(context, 0, tasks) {
+class TaskAdapter(context: Context, tasks: List<Task>, private val taskActivityLauncher: ActivityResultLauncher<Intent>) : ArrayAdapter<Task>(context, 0, tasks) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_task, parent, false)
         val task = getItem(position)
@@ -44,7 +45,7 @@ class TaskAdapter(context: Context, tasks: List<Task>) : ArrayAdapter<Task>(cont
         view.setOnClickListener {
             val intent = Intent(context, UpdateTaskActivity::class.java)
             intent.putExtra("TASK_ID", task.id)
-            context.startActivity(intent)
+            taskActivityLauncher.launch(intent)
         }
 
         return view

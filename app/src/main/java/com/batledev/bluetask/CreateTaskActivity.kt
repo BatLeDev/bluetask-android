@@ -173,6 +173,7 @@ class CreateTaskActivity : AppCompatActivity() {
             .add(task)
             .addOnSuccessListener { documentReference ->
                 println("Task added with ID: ${documentReference.id}")
+                setResult(RESULT_OK)
                 finish()
             }
             .addOnFailureListener { e ->

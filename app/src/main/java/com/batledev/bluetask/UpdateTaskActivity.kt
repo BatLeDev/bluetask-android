@@ -1,7 +1,6 @@
 package com.batledev.bluetask
 
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -235,6 +234,7 @@ class UpdateTaskActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     println("Task updated successfully")
                     Toast.makeText(this, resources.getString(R.string.update_successful), Toast.LENGTH_SHORT).show()
+                    setResult(RESULT_OK)
                     finish()
                 }
                 .addOnFailureListener { e ->
@@ -255,6 +255,7 @@ class UpdateTaskActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         println("Task deleted successfully")
                         Toast.makeText(this, resources.getString(R.string.delete_successful), Toast.LENGTH_SHORT).show()
+                        setResult(RESULT_OK)
                         finish()
                     }
                     .addOnFailureListener { e ->
@@ -266,6 +267,7 @@ class UpdateTaskActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         println("Task marked as deleted successfully")
                         Toast.makeText(this, resources.getString(R.string.trash_successful), Toast.LENGTH_SHORT).show()
+                        setResult(RESULT_OK)
                         finish()
                     }
                     .addOnFailureListener { e ->
@@ -289,6 +291,7 @@ class UpdateTaskActivity : AppCompatActivity() {
                         else resources.getString(R.string.unarchive_successful)
                     println(message)
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    setResult(RESULT_OK)
                     finish()
                 }
                 .addOnFailureListener { e ->
