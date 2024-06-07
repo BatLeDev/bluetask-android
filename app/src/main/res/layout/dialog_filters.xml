@@ -75,5 +75,5 @@
         android:id="@+id/applyFiltersButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Apply Filters" />
+        android:text="@string/apply_filters" />
 </LinearLayout>

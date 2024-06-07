@@ -8,7 +8,7 @@
     <color name="medium">#FF9800</color>
     <color name="high">#FF5252</color>
     <color name="background_grey">#212121</color>
-    <color name="background_light">#ECECEC</color>
+    <color name="background_light">#F8F8F8</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 </resources>

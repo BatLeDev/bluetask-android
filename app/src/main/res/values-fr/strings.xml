@@ -44,4 +44,5 @@
     <string name="medium">Moyenne</string>
     <string name="high">Haute</string>
     <string name="all">Toutes</string>
+    <string name="apply_filters">Appliquer les filtres</string>
 </resources>
