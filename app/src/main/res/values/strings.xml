@@ -37,4 +37,14 @@
     <string name="unarchive_successful">Task unarchived successfully</string>
     <string name="restore">Restore</string>
     <string name="unarchive">Unarchive</string>
+    <string name="filters">Filters</string>
+    <string name="orderBy">Order by</string>
+    <string name="newest">Newest</string>
+    <string name="startDate">Start date</string>
+    <string name="endDate">End date</string>
+    <string name="priority">Priority</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="all">All</string>
 </resources>

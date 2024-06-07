@@ -34,4 +34,14 @@
     <string name="unarchive_successful">Tâche desarchivé</string>
     <string name="restore">Restaurer</string>
     <string name="unarchive">Desarchiver</string>
+    <string name="filters">Filtres</string>
+    <string name="orderBy">Trier par</string>
+    <string name="newest">Le plus récent</string>
+    <string name="startDate">Date de début</string>
+    <string name="endDate">Date de fin</string>
+    <string name="priority">Priorité</string>
+    <string name="low">Basse</string>
+    <string name="medium">Moyenne</string>
+    <string name="high">Haute</string>
+    <string name="all">Toutes</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.batledev.bluetask
 
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -174,7 +173,6 @@ class CreateTaskActivity : AppCompatActivity() {
             .add(task)
             .addOnSuccessListener { documentReference ->
                 println("Task added with ID: ${documentReference.id}")
-                startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
             .addOnFailureListener { e ->
