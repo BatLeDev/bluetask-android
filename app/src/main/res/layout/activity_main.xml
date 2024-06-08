@@ -60,7 +60,7 @@
             android:id="@+id/createTaskButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/create_new_task"
+            android:text="@string/create_task"
             android:layout_margin="8dp"
             android:layout_gravity="center_horizontal"/>
     </LinearLayout>

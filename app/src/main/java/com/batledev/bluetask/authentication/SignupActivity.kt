@@ -67,7 +67,7 @@ class SignupActivity : AppCompatActivity() {
      * - Check if the password is empty
      * - Check if the password and confirm password match
      * - Create a user with the email and password
-     * - If the user is created successfully, show a toast message and update the UI
+     * - If the user is created successfully, update the UI
      */
     private fun registerUser() {
         // Get and trim the email, password and confirm password
@@ -77,15 +77,15 @@ class SignupActivity : AppCompatActivity() {
 
         // Check if data is valid
         if (TextUtils.isEmpty(email)) {
-            signupEmail.error = "Email is required."
+            signupEmail.error = resources.getString(R.string.error_email_required)
             return
         }
         if (TextUtils.isEmpty(password)) {
-            signupPassword.error = "Password is required."
+            signupPassword.error = resources.getString(R.string.error_password_required)
             return
         }
         if (password != confirmPassword) {
-            signupConfirmPassword.error = "Passwords do not match."
+            signupConfirmPassword.error = resources.getString(R.string.error_password_mismatch)
             return
         }
 
@@ -98,7 +98,8 @@ class SignupActivity : AppCompatActivity() {
                     val user = hashMapOf(
                         "email" to currentUser.email,
                         "labels" to emptyList<String>(),
-                        "createdAt" to FieldValue.serverTimestamp()
+                        "createdAt" to FieldValue.serverTimestamp(),
+                        "theme" to "dark"
                     )
                     firestore.collection("users").document(currentUser.uid)
                         .set(user)
@@ -107,10 +108,7 @@ class SignupActivity : AppCompatActivity() {
                         }
                 } else {
                     Toast.makeText(
-                        baseContext,
-                        "Registration failed: " + task.exception!!.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                        this, resources.getString(R.string.error_auth_failed), Toast.LENGTH_LONG ).show()
                 }
             }
     }

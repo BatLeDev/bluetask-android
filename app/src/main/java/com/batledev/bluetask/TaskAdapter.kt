@@ -44,7 +44,7 @@ class TaskAdapter(context: Context, tasks: List<Task>, private val taskActivityL
         if (task.title.isEmpty() && task.description.isEmpty()) {
             titleTextView.visibility = View.GONE
             descriptionTextView.visibility = View.VISIBLE
-            descriptionTextView.text = context.getString(R.string.empty_task_description)
+            descriptionTextView.text = context.getString(R.string.empty_title_description)
             descriptionTextView.setTypeface(null, Typeface.ITALIC)
         }
         // If the title is empty, hide the title, same for the description

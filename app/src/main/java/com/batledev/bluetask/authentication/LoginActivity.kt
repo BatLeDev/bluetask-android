@@ -64,11 +64,11 @@ class LoginActivity : AppCompatActivity() {
 
         // Check if data is valid
         if (TextUtils.isEmpty(email)) {
-            loginEmail.error = "Email is required."
+            loginEmail.error = resources.getString(R.string.error_email_required)
             return
         }
         if (TextUtils.isEmpty(password)) {
-            loginPassword.error = "Password is required."
+            loginPassword.error = resources.getString(R.string.error_password_required)
             return
         }
 
@@ -79,10 +79,7 @@ class LoginActivity : AppCompatActivity() {
                     TaskUtils.updateUI(this, firebaseAuth.currentUser)
                 } else {
                     Toast.makeText(
-                        baseContext,
-                        "Login failed: " + task.exception?.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                        this, resources.getString(R.string.error_auth_failed), Toast.LENGTH_LONG).show()
                 }
             }
     }

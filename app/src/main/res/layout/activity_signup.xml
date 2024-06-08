@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
-                android:text="@string/sign_up_to_bluetask"
+                android:text="@string/auth_signup_page_title"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -79,7 +79,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/button_primary"
-                android:text="@string/sign_up_with_google" />
+                android:text="@string/auth_signup_with_google" />
 
             <TextView
                 android:id="@+id/already_account"
@@ -88,7 +88,7 @@
                 android:layout_gravity="center_horizontal"
                 android:clickable="true"
                 android:minHeight="48dp"
-                android:text="@string/ask_already_login"
+                android:text="@string/ask_has_account"
                 android:gravity="center_vertical" />
 
         </LinearLayout>

@@ -21,7 +21,7 @@
         android:title="@string/edit_labels" />
 
     <item
-        android:title="@string/menu_bottom_section">
+        android:title="@string/other">
         <menu>
             <item
                 android:id="@+id/logout"

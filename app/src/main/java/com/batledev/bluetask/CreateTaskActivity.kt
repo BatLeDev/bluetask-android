@@ -112,7 +112,7 @@ class CreateTaskActivity : AppCompatActivity() {
 
         // Validate input data
         if (title.isEmpty()) {
-            editTextTitle.error = "Title required"
+            editTextTitle.error = resources.getString(R.string.error_empty_title)
             editTextTitle.requestFocus()
             return
         }
@@ -143,7 +143,8 @@ class CreateTaskActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 println("Error adding task: $e")
-                Toast.makeText(this, "Error adding task", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, resources.getString(R.string.error_create_task),
+                    Toast.LENGTH_SHORT).show()
             }
     }
 }

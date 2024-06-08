@@ -174,7 +174,7 @@ class UpdateTaskActivity : AppCompatActivity() {
 
         // Validate input data
         if (title.isEmpty()) {
-            editTextTitle.error = "Title required"
+            editTextTitle.error = resources.getString(R.string.error_empty_title)
             editTextTitle.requestFocus()
             return
         }
@@ -204,7 +204,7 @@ class UpdateTaskActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 println("Error updating task : $e")
-                Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, resources.getString(R.string.error_update), Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -218,25 +218,23 @@ class UpdateTaskActivity : AppCompatActivity() {
             taskRef.delete()
                 .addOnSuccessListener {
                     println("Task deleted successfully")
-                    Toast.makeText(this, resources.getString(R.string.delete_successful), Toast.LENGTH_SHORT).show()
                     setResult(RESULT_OK)
                     finish()
                 }
                 .addOnFailureListener { e ->
                     println("Error deleting task: $e")
-                    Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, resources.getString(R.string.error_update), Toast.LENGTH_SHORT).show()
                 }
         } else {
             taskRef.update("status", "deleted")
                 .addOnSuccessListener {
                     println("Task marked as deleted successfully")
-                    Toast.makeText(this, resources.getString(R.string.trash_successful), Toast.LENGTH_SHORT).show()
                     setResult(RESULT_OK)
                     finish()
                 }
                 .addOnFailureListener { e ->
                     println("Error updating task : $e")
-                    Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, resources.getString(R.string.error_update), Toast.LENGTH_SHORT).show()
                 }
         }
     }
@@ -249,17 +247,13 @@ class UpdateTaskActivity : AppCompatActivity() {
         val newStatus = if (taskDoc?.status == "archived") "active" else "archived"
         taskRef.update("status", newStatus)
             .addOnSuccessListener {
-                val message =
-                    if (newStatus == "archived") resources.getString(R.string.archive_successful)
-                    else resources.getString(R.string.unarchive_successful)
-                println(message)
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                println("Task archived/unarchived successfully")
                 setResult(RESULT_OK)
                 finish()
             }
             .addOnFailureListener { e ->
                 println("Error updating task : $e")
-                Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, resources.getString(R.string.error_update), Toast.LENGTH_SHORT).show()
             }
     }
 }

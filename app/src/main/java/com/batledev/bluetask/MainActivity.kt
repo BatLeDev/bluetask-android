@@ -199,6 +199,10 @@ class MainActivity : AppCompatActivity() {
     private fun loadTasks() {
         swipeRefreshLayout.isRefreshing = true
 
+        // Show/Hide the create task button
+        val createTaskButton = findViewById<Button>(R.id.createTaskButton)
+        createTaskButton.visibility = if (status == "active" && label.isEmpty()) View.VISIBLE else View.GONE
+
         val userId = firebaseAuth.currentUser?.uid ?: return
         var tasksRef = firestore.collection("users").document(userId)
             .collection("tasks")

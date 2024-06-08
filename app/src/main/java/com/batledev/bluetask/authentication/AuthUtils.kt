@@ -53,8 +53,8 @@ object TaskUtils {
                 } catch (e: ApiException) {
                     Toast.makeText(
                         activity,
-                        "Google login/sign up failed: " + e.message,
-                        Toast.LENGTH_SHORT
+                        activity.resources.getString(R.string.error_auth_failed) + e.message,
+                        Toast.LENGTH_LONG
                     ).show()
                 }
             }
@@ -84,7 +84,8 @@ object TaskUtils {
                             val user = hashMapOf(
                                 "email" to currentUser.email,
                                 "labels" to emptyList<String>(),
-                                "createdAt" to FieldValue.serverTimestamp()
+                                "createdAt" to FieldValue.serverTimestamp(),
+                                "theme" to "dark"
                             )
                             userDoc.set(user).addOnSuccessListener { _ ->
                                 updateUI(activity, currentUser)}
@@ -95,8 +96,8 @@ object TaskUtils {
                 } else {
                     Toast.makeText(
                         activity,
-                        "Google login/sign up failed: " + task.exception!!.message,
-                        Toast.LENGTH_SHORT
+                        activity.resources.getString(R.string.error_auth_failed) + task.exception,
+                        Toast.LENGTH_LONG
                     ).show()
                 }
             }

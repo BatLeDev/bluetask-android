@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerPriority"
         android:layout_marginTop="8dp"
-        android:text="@string/selected_labels"
+        android:text="@string/labels_selected"
         android:minHeight="48dp"
         android:background="?android:attr/selectableItemBackground" />
 
@@ -76,7 +76,7 @@
         android:id="@+id/buttonColorPicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/add_color"
+        android:text="@string/pick_color"
         android:layout_below="@id/buttonEndDatePicker" />
 
     <!-- Add Task Button -->

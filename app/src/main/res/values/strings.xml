@@ -1,64 +1,75 @@
 <resources>
+    <!-- App Level Strings -->
     <string name="app_name" translatable="false">BlueTask</string>
-    <string name="icon_of_the_app">Icon of the app</string>
-    <string name="login">Login</string>
-    <string name="get_started">Get Started</string>
-    <string name="email" translatable="false">Email</string>
-    <string name="password">Password</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="sign_up">Sign up</string>
-    <string name="sign_up_with_google">Sign up with Google</string>
-    <string name="ask_already_login">You have already an account? Login now</string>
-    <string name="sign_up_to_bluetask">Sign up to BlueTask</string>
-    <string name="login_with_google">Login with Google</string>
-    <string name="login_to_bluetask">Login to BlueTask</string>
+    <string name="app_icon_description" translatable="false">App icon</string>
+
+    <!-- Authentication -->
+    <string name="auth_login_with_google">Login with Google</string>
+    <string name="auth_login_page_title">Login to BlueTask</string>
+    <string name="auth_signup_with_google">Sign up with Google</string>
+    <string name="auth_signup_page_title">Sign up to BlueTask</string>
+    <string name="ask_has_account">You have already an account? Login now</string>
     <string name="ask_no_account">You don\'t have an account ? Sign up now</string>
-    <string name="create_new_task">Create new task</string>
-    <string name="add_task">Add Task</string>
-    <string name="description" translatable="false">Description</string>
-    <string name="title">Title</string>
-    <string name="add_color">Background color</string>
-    <string name="pick_start_date">Pick Start Date</string>
-    <string name="pick_end_date">Pick End Date</string>
+
+    <!-- Simple Words -->
+    <string name="about_us">About us</string>
+    <string name="all">All</string>
     <string name="archive">Archive</string>
-    <string name="update">Update</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="delete">Delete</string>
+    <string name="edit_labels">Edit labels</string>
+    <string name="endDate">End date</string>
+    <string name="description" translatable="false">Description</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="filters">Filters</string>
+    <string name="get_started">Get Started</string>
+    <string name="high">High</string>
+    <string name="labels">Labels</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="menu" translatable="false">Menu</string>
+    <string name="newest">Newest</string>
+    <string name="orderBy">Order by</string>
+    <string name="other">Others</string>
+    <string name="password">Password</string>
+    <string name="priority">Priority</string>
+    <string name="restore">Restore</string>
+    <string name="sign_up">Sign up</string>
+    <string name="startDate">Start date</string>
+    <string name="title">Title</string>
+    <string name="trash">Trash</string>
+    <string name="unarchive">Unarchive</string>
+    <string name="update">Update</string>
+
+    <!-- Task -->
+    <string name="all_tasks">All tasks</string>
+    <string name="add_label">Add Label</string>
+    <string name="add_task">Add Task</string>
+    <string name="apply_filters">Apply Filters</string>
+    <string name="create_task">Create a new task</string>
+    <string name="empty_title_description">This task has no title or description. To see tasks that contain only lists, go directly to the web version of BlueTask.</string>
+    <string name="enter_label">Enter label</string>
+    <string name="labels_selected">Labels selected</string>
+    <string name="pick_color">Pick a background color</string>
+    <string name="pick_end_date">Pick a end Date</string>
+    <string name="pick_start_date">Pick a start date</string>
+    <string name="select_labels">Select labels</string>
+
+    <!-- Error Messages -->
+    <string name="error_auth_failed">Authentication failed</string>
+    <string name="error_create_task">Error creating task</string>
+    <string name="error_email_required">Email is required</string>
+    <string name="error_empty_title">Title is required</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+    <string name="error_update">Error updating task</string>
+
     <string-array name="priorities">
         <item>No Priority</item>
         <item>High</item>
         <item>Medium</item>
         <item>Low</item>
     </string-array>
-    <string name="update_successful">Task updated successfully</string>
-    <string name="update_error">Error updating task</string>
-    <string name="delete_successful">Task deleted successfully</string>
-    <string name="trash_successful">Task moved to trash</string>
-    <string name="archive_successful">Task archived successfully</string>
-    <string name="unarchive_successful">Task unarchived successfully</string>
-    <string name="restore">Restore</string>
-    <string name="unarchive">Unarchive</string>
-    <string name="filters">Filters</string>
-    <string name="orderBy">Order by</string>
-    <string name="newest">Newest</string>
-    <string name="startDate">Start date</string>
-    <string name="endDate">End date</string>
-    <string name="priority">Priority</string>
-    <string name="low">Low</string>
-    <string name="medium">Medium</string>
-    <string name="high">High</string>
-    <string name="all">All</string>
-    <string name="apply_filters">Apply Filters</string>
-    <string name="menu" translatable="false">Menu</string>
-    <string name="all_tasks">All tasks</string>
-    <string name="trash">Trash</string>
-    <string name="labels">Labels</string>
-    <string name="logout">Logout</string>
-    <string name="about_us">About us</string>
-    <string name="edit_labels">Edit labels</string>
-    <string name="menu_bottom_section">Other</string>
-    <string name="empty_task_description">This task has no title or description. To see tasks that contain only lists, go directly to the web version of BlueTask.</string>
-    <string name="enter_label">Enter label</string>
-    <string name="add_label">Add Label</string>
-    <string name="selected_labels">Selected labels</string>
-    <string name="select_labels">Select labels</string>
 </resources>
