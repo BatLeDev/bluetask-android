@@ -5,11 +5,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -293,7 +295,23 @@ class MainActivity : AppCompatActivity() {
         val userId = firebaseAuth.currentUser?.uid ?: return
         val userRef = firestore.collection("users").document(userId)
 
-        val labelsAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf<String>())
+        val labelsAdapter = object : ArrayAdapter<String>(this, R.layout.item_label, mutableListOf<String>()) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = convertView ?: layoutInflater.inflate(R.layout.item_label, parent, false)
+                val label = getItem(position) ?: return view
+
+                val textViewLabel = view.findViewById<TextView>(R.id.textViewLabel)
+                val buttonDeleteLabel = view.findViewById<Button>(R.id.buttonDeleteLabel)
+
+                textViewLabel.text = label
+                buttonDeleteLabel.setOnClickListener {
+                    deleteLabel(label)
+                    remove(label)
+                }
+
+                return view
+            }
+        }
         listViewLabels.adapter = labelsAdapter
 
         // Load existing labels
@@ -311,14 +329,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Delete label on item click
-        listViewLabels.setOnItemClickListener { _, _, position, _ ->
-            val label = labelsAdapter.getItem(position) ?: return@setOnItemClickListener
-            deleteLabel(label)
-            labelsAdapter.remove(label)
-            loadLabelsInNavigationView()
-        }
-
         // Add new label
         buttonAddLabel.setOnClickListener {
             val newLabel = editTextLabel.text.toString().trim()
@@ -326,16 +336,21 @@ class MainActivity : AppCompatActivity() {
                 addLabel(newLabel)
                 labelsAdapter.add(newLabel)
                 editTextLabel.text.clear()
-                loadLabelsInNavigationView()
             }
         }
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("Edit Labels")
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok, null)
             .create()
-            .show()
+
+        // call loadLabelsInNavigationView when dialog is dismissed
+        dialog.setOnDismissListener {
+            loadLabelsInNavigationView()
+        }
+
+        dialog.show()
     }
 
     private fun deleteLabel(label: String) {
@@ -344,10 +359,12 @@ class MainActivity : AppCompatActivity() {
 
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(userRef)
-            @Suppress("UNCHECKED_CAST")
-            val labels = snapshot.get("labels") as List<Map<String, String>>
-            val updatedLabels = labels.filter { it["title"] != label }
-            transaction.update(userRef, "labels", updatedLabels)
+            val labels = snapshot.get("labels")
+            if (labels is List<*>) {
+                val updatedLabels = labels.filterIsInstance<Map<String, String>>()
+                    .filter { it["title"] != label }
+                transaction.update(userRef, "labels", updatedLabels)
+            }
         }.addOnSuccessListener {
             // Update tasks
             val tasksRef = firestore.collection("users").document(userId).collection("tasks")
