@@ -14,6 +14,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
  * Utilities functions for authentication.
@@ -74,13 +76,20 @@ object TaskUtils {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(
-                        activity,
-                        "Google login/sign up successful.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    val user = firebaseAuth.currentUser
-                    updateUI(activity, user)
+                    val currentUser = firebaseAuth.currentUser!!
+                    val firestore = FirebaseFirestore.getInstance()
+                    val userDoc = firestore.collection("users").document(currentUser.uid)
+                    userDoc.get().addOnSuccessListener { document ->
+                        if (!document.exists()) {
+                            val user = hashMapOf(
+                                "email" to currentUser.email,
+                                "labels" to emptyList<String>(),
+                                "createdAt" to FieldValue.serverTimestamp()
+                            )
+                            userDoc.set(user)
+                        }
+                    }
+                    updateUI(activity, currentUser)
                 } else {
                     Toast.makeText(
                         activity,

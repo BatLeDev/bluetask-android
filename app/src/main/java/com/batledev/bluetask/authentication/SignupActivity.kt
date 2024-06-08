@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.batledev.bluetask.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
  * Activity for signing up a user.
@@ -25,6 +27,7 @@ class SignupActivity : AppCompatActivity() {
 
     // Firebase
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
 
     /**
      * This function is called when the activity is created.
@@ -45,6 +48,7 @@ class SignupActivity : AppCompatActivity() {
 
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
         val googleLauncher = TaskUtils.registerGoogleSignInLauncher(this)
 
         // Set up click listeners
@@ -89,7 +93,18 @@ class SignupActivity : AppCompatActivity() {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    TaskUtils.updateUI(this, firebaseAuth.currentUser)
+                    // Initialize the user in Firestore
+                    val currentUser = firebaseAuth.currentUser!!
+                    val user = hashMapOf(
+                        "email" to currentUser.email,
+                        "labels" to emptyList<String>(),
+                        "createdAt" to FieldValue.serverTimestamp()
+                    )
+                    firestore.collection("users").document(currentUser.uid)
+                        .set(user)
+                        .addOnSuccessListener {
+                            TaskUtils.updateUI(this, currentUser)
+                        }
                 } else {
                     Toast.makeText(
                         baseContext,
