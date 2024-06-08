@@ -97,4 +97,3 @@ fun updateUI(activity: AppCompatActivity, user: FirebaseUser?) {
         activity.finishAffinity()
     }
 }
-

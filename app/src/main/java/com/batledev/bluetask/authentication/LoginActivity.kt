@@ -45,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         val googleLauncher = registerGoogleSignInLauncher(this)
 
-        // Set up event listeners
+        // Set up click listeners
         loginBtn.setOnClickListener { loginUser() }
         loginGoogleBtn.setOnClickListener { googleAuth(this, googleLauncher) }
         noAccountBtn.setOnClickListener {

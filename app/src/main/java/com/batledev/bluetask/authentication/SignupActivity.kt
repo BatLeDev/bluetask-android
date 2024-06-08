@@ -47,7 +47,7 @@ class SignupActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         val googleLauncher = registerGoogleSignInLauncher(this)
 
-        // Set up event listeners
+        // Set up click listeners
         signupBtn.setOnClickListener { registerUser() }
         signupGoogleBtn.setOnClickListener { googleAuth(this, googleLauncher) }
         alreadyLoginBtn.setOnClickListener {

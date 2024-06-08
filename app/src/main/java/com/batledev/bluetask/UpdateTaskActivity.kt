@@ -12,6 +12,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.skydoves.colorpickerview.ColorPickerDialog
@@ -21,8 +22,14 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Activity to update a task.
+ * Launches when the user clicks on a short task in the main activity list.
+ * The user can update the task title, description, color, start date, end date, and priority.
+ */
 class UpdateTaskActivity : AppCompatActivity() {
 
+    // UI elements
     private lateinit var editTextTitle: EditText
     private lateinit var editTextDescription: EditText
     private lateinit var buttonColorPicker: Button
@@ -33,21 +40,30 @@ class UpdateTaskActivity : AppCompatActivity() {
     private lateinit var buttonDelete: Button
     private lateinit var buttonArchive: Button
 
+    // Firebase
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
-    private var taskId: String? = null
-    private var taskDoc: Task? = null
+    // Task data
+    private lateinit var taskRef: DocumentReference // The reference to the task document
+    private var taskDoc: Task? = null // The task data
     private var taskColor: String? = null
     private var startDate: Date? = null
     private var endDate: Date? = null
     private var priority: Int = -1
 
+    /**
+     * This function is called when the activity is created.
+     * - Get the UI elements and set up the event listeners.
+     * - Initialize Firebase.
+     * - Set up the priority spinner (With translated values).
+     * - Get the task id from the intent and load the task data.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_task)
 
-        // Initialize views
+        // Get UI elements
         editTextTitle = findViewById(R.id.editTextTitle)
         editTextDescription = findViewById(R.id.editTextDescription)
         buttonColorPicker = findViewById(R.id.buttonColorPicker)
@@ -62,7 +78,7 @@ class UpdateTaskActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        // Set click listeners
+        // Set up click listeners
         buttonColorPicker.setOnClickListener { showColorPicker() }
         buttonStartDatePicker.setOnClickListener { showStartDatePicker() }
         buttonEndDatePicker.setOnClickListener { showEndDatePicker() }
@@ -85,65 +101,65 @@ class UpdateTaskActivity : AppCompatActivity() {
                     else -> -1
                 }
             }
-
             override fun onNothingSelected(parent: AdapterView<*>) {
                 priority = -1
             }
         }
 
         // Get taskId from intent and load task data
-        taskId = intent.getStringExtra("TASK_ID")
-        taskId?.let { loadTask(it) }
+        val userId = firebaseAuth.currentUser!!.uid
+        val taskId = intent.getStringExtra("TASK_ID") ?: return finish()
+        this.taskRef = firestore.collection("users").document(userId)
+            .collection("tasks").document(taskId)
+        loadTask()
     }
 
     /**
      * Load task data from Firestore
-     * @param taskId Task ID
      */
-    private fun loadTask(taskId: String) {
-        val userId = firebaseAuth.currentUser?.uid ?: return
-        val taskRef = firestore.collection("users").document(userId).collection("tasks").document(taskId)
-
+    private fun loadTask() {
+        // Get task data
         taskRef.get().addOnSuccessListener { document ->
-            if (document != null) {
-                taskDoc = document.toObject<Task>()
-                taskDoc?.let {
-                    // Set variables
-                    taskColor = it.color
-                    startDate = it.startDate?.toDate()
-                    endDate = it.endDate?.toDate()
-                    priority = it.priority
+            taskDoc = document.toObject<Task>()
+            taskDoc?.let {
+                // Set variables
+                taskColor = it.color
+                startDate = it.startDate?.toDate()
+                endDate = it.endDate?.toDate()
+                priority = it.priority
 
-                    // Set elements on the view
-                    editTextTitle.setText(it.title)
-                    editTextDescription.setText(it.description)
-                    taskColor?.let { color ->
-                        buttonColorPicker.setBackgroundColor(Color.parseColor(color))
-                    }
-                    startDate?.let { date ->
-                        buttonStartDatePicker.text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
-                    }
-                    endDate?.let { date ->
-                        buttonEndDatePicker.text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
-                    }
-                    val priorityIndex = when (priority) {
-                        2 -> 1
-                        1 -> 2
-                        0 -> 3
-                        else -> 0
-                    }
-                    spinnerPriority.setSelection(priorityIndex)
-                    buttonUpdate.text =
-                        if (it.status == "deleted") resources.getString(R.string.restore)
-                        else resources.getString(R.string.update)
-                    buttonArchive.text =
-                        if (it.status == "archived") resources.getString(R.string.unarchive)
-                        else resources.getString(R.string.archive)
+                // Set elements on the view
+                editTextTitle.setText(it.title)
+                editTextDescription.setText(it.description)
+                taskColor?.let { color ->
+                    buttonColorPicker.setBackgroundColor(Color.parseColor(color))
                 }
+                startDate?.let { date ->
+                    buttonStartDatePicker.text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
+                }
+                endDate?.let { date ->
+                    buttonEndDatePicker.text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
+                }
+                val priorityIndex = when (priority) {
+                    2 -> 1
+                    1 -> 2
+                    0 -> 3
+                    else -> 0
+                }
+                spinnerPriority.setSelection(priorityIndex)
+                buttonUpdate.text =
+                    if (it.status == "deleted") resources.getString(R.string.restore)
+                    else resources.getString(R.string.update)
+                buttonArchive.text =
+                    if (it.status == "archived") resources.getString(R.string.unarchive)
+                    else resources.getString(R.string.archive)
             }
         }
     }
 
+    /**
+     * Show the start date picker dialog.
+     */
     private fun showStartDatePicker() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(
@@ -164,6 +180,9 @@ class UpdateTaskActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
+    /**
+     * Show the end date picker dialog.
+     */
     private fun showEndDatePicker() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(
@@ -184,6 +203,9 @@ class UpdateTaskActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
+    /**
+     * Show the color picker dialog.
+     */
     private fun showColorPicker() {
         ColorPickerDialog.Builder(this)
             .setTitle("Pick a color")
@@ -204,17 +226,23 @@ class UpdateTaskActivity : AppCompatActivity() {
             .show()
     }
 
+    /**
+     * Update the task in Firestore.
+     * - If the task is deleted, change the status to active (restore it).
+     */
     private fun updateTask() {
+        // Get input data
         val title = editTextTitle.text.toString().trim()
         val description = editTextDescription.text.toString().trim()
-        val userId = firebaseAuth.currentUser!!.uid
 
+        // Validate input data
         if (title.isEmpty()) {
             editTextTitle.error = "Title required"
             editTextTitle.requestFocus()
             return
         }
 
+        // Assemble task data
         val task = hashMapOf<String, Any?>(
             "title" to title,
             "description" to description,
@@ -224,81 +252,75 @@ class UpdateTaskActivity : AppCompatActivity() {
             "priority" to priority
         )
 
+        // Change to active if the task is deleted
         if (taskDoc?.status == "deleted") {
             task["status"] = "active"
         }
 
-        taskId?.let {
-            firestore.collection("users").document(userId).collection("tasks").document(it)
-                .update(task as Map<String, Any?>)
-                .addOnSuccessListener {
-                    println("Task updated successfully")
-                    Toast.makeText(this, resources.getString(R.string.update_successful), Toast.LENGTH_SHORT).show()
-                    setResult(RESULT_OK)
-                    finish()
-                }
-                .addOnFailureListener { e ->
-                    println("Error updating task: $e")
-                    Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
-                }
-        }
-    }
-
-    private fun deleteTask() {
-        val userId = firebaseAuth.currentUser!!.uid
-
-        taskId?.let { id ->
-            val taskRef = firestore.collection("users").document(userId).collection("tasks").document(id)
-
-            if (taskDoc?.status == "deleted") {
-                taskRef.delete()
-                    .addOnSuccessListener {
-                        println("Task deleted successfully")
-                        Toast.makeText(this, resources.getString(R.string.delete_successful), Toast.LENGTH_SHORT).show()
-                        setResult(RESULT_OK)
-                        finish()
-                    }
-                    .addOnFailureListener { e ->
-                        println("Error deleting task: $e")
-                        Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
-                    }
-            } else {
-                taskRef.update("status", "deleted")
-                    .addOnSuccessListener {
-                        println("Task marked as deleted successfully")
-                        Toast.makeText(this, resources.getString(R.string.trash_successful), Toast.LENGTH_SHORT).show()
-                        setResult(RESULT_OK)
-                        finish()
-                    }
-                    .addOnFailureListener { e ->
-                        println("Error updating task status: $e")
-                        Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
-                    }
+        // Update task in Firestore database
+        taskRef.update(task as Map<String, Any?>)
+            .addOnSuccessListener {
+                println("Task updated successfully")
+                setResult(RESULT_OK)
+                finish()
             }
-        }
+            .addOnFailureListener { e ->
+                println("Error updating task : $e")
+                Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
+            }
     }
 
-    private fun archiveTask() {
-        val userId = firebaseAuth.currentUser!!.uid
-
-        taskId?.let { id ->
-            val newStatus = if (taskDoc?.status == "archived") "active" else "archived"
-            val taskRef = firestore.collection("users").document(userId).collection("tasks").document(id)
-            taskRef.update("status", newStatus)
+    /**
+     * Move to the trash or delete the task permanently.
+     * - If the task is already deleted, delete it permanently, otherwise move it to the trash.
+     */
+    private fun deleteTask() {
+        if (taskDoc?.status == "deleted") {
+            taskRef.delete()
                 .addOnSuccessListener {
-                    val message =
-                        if (newStatus == "archived") resources.getString(R.string.archive_successful)
-                        else resources.getString(R.string.unarchive_successful)
-                    println(message)
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    println("Task deleted successfully")
+                    Toast.makeText(this, resources.getString(R.string.delete_successful), Toast.LENGTH_SHORT).show()
                     setResult(RESULT_OK)
                     finish()
                 }
                 .addOnFailureListener { e ->
-                    println("Error updating task status: $e")
+                    println("Error deleting task: $e")
+                    Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            taskRef.update("status", "deleted")
+                .addOnSuccessListener {
+                    println("Task marked as deleted successfully")
+                    Toast.makeText(this, resources.getString(R.string.trash_successful), Toast.LENGTH_SHORT).show()
+                    setResult(RESULT_OK)
+                    finish()
+                }
+                .addOnFailureListener { e ->
+                    println("Error updating task : $e")
                     Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
                 }
         }
     }
 
+    /**
+     * Archive or unarchive the task.
+     * - If the task is archived, unarchive it, otherwise archive it.
+     */
+    private fun archiveTask() {
+        val newStatus = if (taskDoc?.status == "archived") "active" else "archived"
+        taskRef.update("status", newStatus)
+            .addOnSuccessListener {
+                val message =
+                    if (newStatus == "archived") resources.getString(R.string.archive_successful)
+                    else resources.getString(R.string.unarchive_successful)
+                println(message)
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                setResult(RESULT_OK)
+                finish()
+            }
+            .addOnFailureListener { e ->
+                println("Error updating task : $e")
+                Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
+            }
+    }
 }
