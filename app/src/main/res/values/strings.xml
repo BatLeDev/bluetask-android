@@ -59,4 +59,6 @@
     <string name="empty_task_description">This task has no title or description. To see tasks that contain only lists, go directly to the web version of BlueTask.</string>
     <string name="enter_label">Enter label</string>
     <string name="add_label">Add Label</string>
+    <string name="selected_labels">Selected labels</string>
+    <string name="select_labels">Select labels</string>
 </resources>

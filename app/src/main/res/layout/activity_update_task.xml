@@ -36,14 +36,32 @@
         android:layout_marginTop="8dp"
         android:minHeight="48dp" />
 
+    <!-- Labels List -->
+    <TextView
+        android:id="@+id/textViewSelectedLabels"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerPriority"
+        android:layout_marginTop="8dp"
+        android:text="@string/selected_labels"
+        android:minHeight="48dp"
+        android:background="?android:attr/selectableItemBackground" />
+
+    <!-- Label Picker Button -->
+    <Button
+        android:id="@+id/buttonLabelPicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_labels"
+        android:layout_below="@id/textViewSelectedLabels" />
+
     <!-- Start Date Picker -->
     <Button
         android:id="@+id/buttonStartDatePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/pick_start_date"
-        android:layout_below="@id/spinnerPriority"
-        android:layout_marginTop="8dp" />
+        android:layout_below="@id/buttonLabelPicker" />
 
     <!-- End Date Picker -->
     <Button

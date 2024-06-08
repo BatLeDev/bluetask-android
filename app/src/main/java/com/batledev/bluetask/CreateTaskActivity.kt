@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Date
@@ -26,16 +28,19 @@ class CreateTaskActivity : AppCompatActivity() {
     private lateinit var buttonStartDatePicker: Button
     private lateinit var buttonEndDatePicker: Button
     private lateinit var spinnerPriority: Spinner
+    private lateinit var buttonLabelPicker: Button
+    private lateinit var textViewSelectedLabels: TextView
 
     // Firebase
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
     // Task data (for complex input)
+    private var priority: Int = -1
+    private var selectedLabels: List<String> = emptyList()
     private var taskColor: String? = null
     private var startDate: Date? = null
     private var endDate: Date? = null
-    private var priority: Int = -1
 
     /**
      * This function is called when the activity is created.
@@ -55,10 +60,13 @@ class CreateTaskActivity : AppCompatActivity() {
         buttonStartDatePicker = findViewById(R.id.buttonStartDatePicker)
         buttonEndDatePicker = findViewById(R.id.buttonEndDatePicker)
         spinnerPriority = findViewById(R.id.spinnerPriority)
+        buttonLabelPicker = findViewById(R.id.buttonLabelPicker)
+        textViewSelectedLabels = findViewById(R.id.textViewSelectedLabels)
 
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        val userRef = firestore.collection("users").document(firebaseAuth.currentUser!!.uid)
 
         // Set up click listeners
         buttonColorPicker.setOnClickListener {
@@ -76,7 +84,13 @@ class CreateTaskActivity : AppCompatActivity() {
                 endDate = date
             }
         }
-        buttonAddTask.setOnClickListener { addTask() }
+        buttonLabelPicker.setOnClickListener {
+            TaskUtils.showLabelPicker(this, userRef, selectedLabels) { labels ->
+                selectedLabels = labels.toMutableList()
+                textViewSelectedLabels.text = selectedLabels.joinToString(", ")
+            }
+        }
+        buttonAddTask.setOnClickListener { addTask(userRef) }
 
         // Set up priority spinner
         val priorities = resources.getStringArray(R.array.priorities)
@@ -91,10 +105,7 @@ class CreateTaskActivity : AppCompatActivity() {
      * - The webapp has more features, so the task data is more complex.
      * - On the mobile app, we require a task title that not required on the webapp.
      */
-    private fun addTask() {
-        // Get the user ID (to store the task in task collection of the user's document)
-        val userId = firebaseAuth.currentUser!!.uid
-
+    private fun addTask(userRef: DocumentReference) {
         // Get input data
         val title = editTextTitle.text.toString().trim()
         val description = editTextDescription.text.toString().trim()
@@ -113,7 +124,7 @@ class CreateTaskActivity : AppCompatActivity() {
             "color" to taskColor,
             "startDate" to startDate,
             "endDate" to endDate,
-            "labels" to emptyList<String>(),
+            "labels" to selectedLabels,
             "lines" to emptyList<String>(),
             "linesChecked" to emptyList<String>(),
             "priority" to priority,
@@ -123,7 +134,7 @@ class CreateTaskActivity : AppCompatActivity() {
         )
 
         // Add the task to the Firestore database
-        firestore.collection("users").document(userId).collection("tasks")
+        userRef.collection("tasks")
             .add(task)
             .addOnSuccessListener { documentReference ->
                 println("Task added with ID: ${documentReference.id}")

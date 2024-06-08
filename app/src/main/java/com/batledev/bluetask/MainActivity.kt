@@ -386,8 +386,7 @@ class MainActivity : AppCompatActivity() {
             }
         }.addOnSuccessListener {
             // Update tasks
-            val userId = firebaseAuth.currentUser?.uid!!
-            val tasksRef = firestore.collection("users").document(userId).collection("tasks")
+            val tasksRef = userRef.collection("tasks")
             tasksRef.whereArrayContains("labels", label).get().addOnSuccessListener { documents ->
                 for (document in documents) {
                     tasksRef.document(document.id).update("labels", FieldValue.arrayRemove(label))

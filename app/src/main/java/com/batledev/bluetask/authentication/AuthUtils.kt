@@ -65,7 +65,7 @@ object TaskUtils {
      * @param firebaseAuth The Firebase authentication instance.
      * @param idToken The Google ID token.
      */
-    fun firebaseAuthWithGoogle(
+    private fun firebaseAuthWithGoogle(
         activity: AppCompatActivity,
         firebaseAuth: FirebaseAuth,
         idToken: String?

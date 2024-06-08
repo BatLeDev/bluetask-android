@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -32,6 +33,8 @@ class UpdateTaskActivity : AppCompatActivity() {
     private lateinit var buttonUpdate: Button
     private lateinit var buttonDelete: Button
     private lateinit var buttonArchive: Button
+    private lateinit var buttonLabelPicker: Button
+    private lateinit var textViewSelectedLabels: TextView
 
     // Firebase
     private lateinit var firebaseAuth: FirebaseAuth
@@ -40,10 +43,11 @@ class UpdateTaskActivity : AppCompatActivity() {
     // Task data
     private lateinit var taskRef: DocumentReference // The reference to the task document
     private var taskDoc: Task? = null // The task data
+    private var priority: Int = -1
+    private var selectedLabels: List<String> = emptyList()
     private var taskColor: String? = null
     private var startDate: Date? = null
     private var endDate: Date? = null
-    private var priority: Int = -1
 
     /**
      * This function is called when the activity is created.
@@ -66,10 +70,14 @@ class UpdateTaskActivity : AppCompatActivity() {
         buttonUpdate = findViewById(R.id.buttonUpdate)
         buttonDelete = findViewById(R.id.buttonDelete)
         buttonArchive = findViewById(R.id.buttonArchive)
+        buttonLabelPicker = findViewById(R.id.buttonLabelPicker)
+        textViewSelectedLabels = findViewById(R.id.textViewSelectedLabels)
 
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        val userId = firebaseAuth.currentUser!!.uid
+        val userRef = firestore.collection("users").document(userId)
 
         // Set up click listeners
         buttonColorPicker.setOnClickListener {
@@ -87,6 +95,12 @@ class UpdateTaskActivity : AppCompatActivity() {
                 endDate = date
             }
         }
+        buttonLabelPicker.setOnClickListener {
+            TaskUtils.showLabelPicker(this, userRef, selectedLabels) { labels ->
+                selectedLabels = labels.toMutableList()
+                textViewSelectedLabels.text = selectedLabels.joinToString(", ")
+            }
+        }
         buttonUpdate.setOnClickListener { updateTask() }
         buttonDelete.setOnClickListener { deleteTask() }
         buttonArchive.setOnClickListener { archiveTask() }
@@ -98,10 +112,8 @@ class UpdateTaskActivity : AppCompatActivity() {
         }
 
         // Get taskId from intent and load task data
-        val userId = firebaseAuth.currentUser!!.uid
         val taskId = intent.getStringExtra("TASK_ID") ?: return finish()
-        this.taskRef = firestore.collection("users").document(userId)
-            .collection("tasks").document(taskId)
+        this.taskRef = userRef.collection("tasks").document(taskId)
         loadTask()
     }
 
@@ -118,10 +130,12 @@ class UpdateTaskActivity : AppCompatActivity() {
                 startDate = it.startDate?.toDate()
                 endDate = it.endDate?.toDate()
                 priority = it.priority
+                selectedLabels = it.labels.toMutableList()
 
                 // Set elements on the view
                 editTextTitle.setText(it.title)
                 editTextDescription.setText(it.description)
+                textViewSelectedLabels.text = selectedLabels.joinToString(", ")
                 taskColor?.let { color ->
                     buttonColorPicker.setBackgroundColor(Color.parseColor(color))
                 }
@@ -148,6 +162,7 @@ class UpdateTaskActivity : AppCompatActivity() {
         }
     }
 
+
     /**
      * Update the task in Firestore.
      * - If the task is deleted, change the status to active (restore it).
@@ -165,13 +180,14 @@ class UpdateTaskActivity : AppCompatActivity() {
         }
 
         // Assemble task data
-        val task = hashMapOf<String, Any?>(
+        val task = hashMapOf(
             "title" to title,
             "description" to description,
             "color" to taskColor,
             "startDate" to startDate,
             "endDate" to endDate,
-            "priority" to priority
+            "priority" to priority,
+            "labels" to selectedLabels // Add selected labels
         )
 
         // Change to active if the task is deleted
@@ -191,6 +207,7 @@ class UpdateTaskActivity : AppCompatActivity() {
                 Toast.makeText(this, resources.getString(R.string.update_error), Toast.LENGTH_SHORT).show()
             }
     }
+
 
     /**
      * Move to the trash or delete the task permanently.

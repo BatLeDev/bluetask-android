@@ -1,5 +1,6 @@
 package com.batledev.bluetask
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
 import android.view.View
@@ -7,6 +8,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import com.google.firebase.firestore.DocumentReference
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import java.text.SimpleDateFormat
@@ -46,6 +48,69 @@ object TaskUtils {
                 onPrioritySelected(-1)
             }
         }
+    }
+
+    /**
+     * Show the label picker.
+     * - Get the labels from the user reference.
+     * - Show the label picker dialog.
+     * @param context The context of the activity.
+     * @param userRef The user reference to get the labels.
+     * @param selectedLabels The labels already selected.
+     * @param onLabelsSelected The function to call when labels are selected.
+     */
+    fun showLabelPicker(context: Context, userRef: DocumentReference, selectedLabels: List<String>, onLabelsSelected: (List<String>) -> Unit) {
+        userRef.get().addOnSuccessListener { document ->
+            val labelsList = mutableListOf<String>() // Mutable list to store available labels
+            if (document != null && document.exists()) {
+                val labels = document.get("labels")
+                if (labels is List<*>) {
+                    for (labelMap in labels) {
+                        if (labelMap is Map<*, *>) {
+                            val title = labelMap["title"] as? String ?: ""
+                            labelsList.add(title)
+                        }
+                    }
+                }
+            }
+            // Show label picker dialog
+            showLabelPickerDialog(context, labelsList, selectedLabels, onLabelsSelected)
+        }
+    }
+
+    /**
+     * Show the label picker dialog.
+     * @param context The context of the activity.
+     * @param labelsList The list of labels to display.
+     * @param selectedLabels The labels already selected.
+     * @param onLabelsSelected The function to call when labels are selected.
+     */
+    private fun showLabelPickerDialog(context: Context, labelsList: List<String>, selectedLabels: List<String>, onLabelsSelected: (List<String>) -> Unit) {
+        val labelsArray = labelsList.toTypedArray() // All labels
+        val selectedItems = BooleanArray(labelsArray.size) // Array of booleans, true if selected
+        val selectedLabelsTemp = selectedLabels.toMutableList() // Selected labels
+
+        // Pre-select already selected labels
+        for ((index, label) in labelsArray.withIndex()) {
+            if (selectedLabels.contains(label)) {
+                selectedItems[index] = true
+            }
+        }
+
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Select Labels")
+        builder.setMultiChoiceItems(labelsArray, selectedItems) { _, which, isChecked ->
+            if (isChecked) {
+                selectedLabelsTemp.add(labelsArray[which])
+            } else {
+                selectedLabelsTemp.remove(labelsArray[which])
+            }
+        }
+        builder.setPositiveButton("OK") { _, _ ->
+            onLabelsSelected(selectedLabelsTemp)
+        }
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
     }
 
     /**
