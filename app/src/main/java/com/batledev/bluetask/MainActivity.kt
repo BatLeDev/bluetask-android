@@ -21,15 +21,25 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.batledev.bluetask.authentication.UnloggedActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 
+/**
+ * This activity is the main activity of the app. It's shown when the user is logged in.
+ * - Show the list of tasks
+ * - Show a button to create a new task
+ * - Show a button to open the filters dialog
+ * - Show a button to open the navigation drawer
+ * that allow to navigate to all tasks, archive, trash, labels, logout and about us
+ */
 class MainActivity : AppCompatActivity() {
     // Firebase
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var userRef: DocumentReference
 
     // UI elements
     private lateinit var drawerLayout: DrawerLayout
@@ -73,6 +83,8 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firestore
         firestore = FirebaseFirestore.getInstance()
+        val userId = firebaseAuth.currentUser?.uid!!
+        this.userRef = firestore.collection("users").document(userId)
 
         // Setup ListView
         val listView = findViewById<ListView>(R.id.listViewTasks)
@@ -150,9 +162,6 @@ class MainActivity : AppCompatActivity() {
      * - Add the labels to the navigation view
      */
     private fun loadLabelsInNavigationView() {
-        val userId = firebaseAuth.currentUser?.uid ?: return
-        val userRef = firestore.collection("users").document(userId)
-
         // Get the labels from the user document
         userRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
@@ -292,9 +301,6 @@ class MainActivity : AppCompatActivity() {
         val editTextLabel = dialogView.findViewById<EditText>(R.id.editTextLabel)
         val buttonAddLabel = dialogView.findViewById<Button>(R.id.buttonAddLabel)
 
-        val userId = firebaseAuth.currentUser?.uid ?: return
-        val userRef = firestore.collection("users").document(userId)
-
         val labelsAdapter = object : ArrayAdapter<String>(this, R.layout.item_label, mutableListOf<String>()) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = convertView ?: layoutInflater.inflate(R.layout.item_label, parent, false)
@@ -353,10 +359,23 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun deleteLabel(label: String) {
-        val userId = firebaseAuth.currentUser?.uid ?: return
-        val userRef = firestore.collection("users").document(userId)
+    /**
+     * Add a label
+     * - Get the user document
+     * - Add the label to the user document
+     */
+    private fun addLabel(newLabel: String) {
+        val newLabelMap = mapOf("title" to newLabel, "icon" to "mdi-tag-outline")
+        userRef.update("labels", FieldValue.arrayUnion(newLabelMap))
+    }
 
+    /**
+     * Delete a label
+     * - Get the user document
+     * - Remove the label from the user label list
+     * - Update all tasks that have the label
+     */
+    private fun deleteLabel(label: String) {
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(userRef)
             val labels = snapshot.get("labels")
@@ -367,6 +386,7 @@ class MainActivity : AppCompatActivity() {
             }
         }.addOnSuccessListener {
             // Update tasks
+            val userId = firebaseAuth.currentUser?.uid!!
             val tasksRef = firestore.collection("users").document(userId).collection("tasks")
             tasksRef.whereArrayContains("labels", label).get().addOnSuccessListener { documents ->
                 for (document in documents) {
@@ -374,14 +394,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun addLabel(newLabel: String) {
-        val userId = firebaseAuth.currentUser?.uid ?: return
-        val userRef = firestore.collection("users").document(userId)
-
-        val newLabelMap = mapOf("title" to newLabel, "icon" to "mdi-tag-outline")
-        userRef.update("labels", FieldValue.arrayUnion(newLabelMap))
     }
 
 }

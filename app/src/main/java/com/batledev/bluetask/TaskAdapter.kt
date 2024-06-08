@@ -13,23 +13,42 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.cardview.widget.CardView
 
+/**
+ * Task adapter for the task list.
+ * @param context The context of the adapter.
+ * @param tasks The list of tasks.
+ * @param taskActivityLauncher The activity result launcher for the task activity
+ *                             (To refresh the task list).
+ */
 class TaskAdapter(context: Context, tasks: List<Task>, private val taskActivityLauncher: ActivityResultLauncher<Intent>) : ArrayAdapter<Task>(context, 0, tasks) {
+
+    /**
+     * Get the view of the task item.
+     * @param position The position of the task item.
+     * @param convertView The view of the task item.
+     * @param parent The parent view of the task item.
+     * @return The view of the task item.
+     */
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_task, parent, false)
-        val task = getItem(position)
+        val task = getItem(position)!!
 
+        // Get UI elements
         val cardView = view.findViewById<CardView>(R.id.taskItem)
         val titleTextView = view.findViewById<TextView>(R.id.taskTitle)
         val descriptionTextView = view.findViewById<TextView>(R.id.taskDescription)
 
         // Set the title and description of the task
-        // If the title or description is null or empty, hide the text view
-        if (task!!.title.isEmpty() && task.description.isEmpty()) {
+        // If the title and the description are empty,
+        // show a message to announce that the task is empty
+        if (task.title.isEmpty() && task.description.isEmpty()) {
             titleTextView.visibility = View.GONE
             descriptionTextView.visibility = View.VISIBLE
             descriptionTextView.text = context.getString(R.string.empty_task_description)
             descriptionTextView.setTypeface(null, Typeface.ITALIC)
-        } else {
+        }
+        // If the title is empty, hide the title, same for the description
+        else {
             if (task.title.isEmpty()) {
                 titleTextView.visibility = View.GONE
             } else {
@@ -46,6 +65,7 @@ class TaskAdapter(context: Context, tasks: List<Task>, private val taskActivityL
             }
         }
 
+        // Set the color of the task (if defined)
         if (!task.color.isNullOrEmpty()) {
             cardView.setCardBackgroundColor(Color.parseColor(task.color))
         } else {
