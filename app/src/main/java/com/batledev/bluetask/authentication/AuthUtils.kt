@@ -86,10 +86,12 @@ object TaskUtils {
                                 "labels" to emptyList<String>(),
                                 "createdAt" to FieldValue.serverTimestamp()
                             )
-                            userDoc.set(user)
+                            userDoc.set(user).addOnSuccessListener { _ ->
+                                updateUI(activity, currentUser)}
+                        } else {
+                            updateUI(activity, currentUser)
                         }
                     }
-                    updateUI(activity, currentUser)
                 } else {
                     Toast.makeText(
                         activity,

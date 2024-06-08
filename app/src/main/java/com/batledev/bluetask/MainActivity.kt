@@ -221,7 +221,6 @@ class MainActivity : AppCompatActivity() {
             for (document in documents) {
                 val taskId = document.id
                 val task = document.toObject<Task>().copy(id = taskId)
-                println(task)
                 tasks.add(task)
             }
             swipeRefreshLayout.isRefreshing = false
