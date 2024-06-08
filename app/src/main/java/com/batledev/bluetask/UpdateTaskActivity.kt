@@ -86,12 +86,12 @@ class UpdateTaskActivity : AppCompatActivity() {
             }
         }
         buttonStartDatePicker.setOnClickListener {
-            TaskUtils.showStartDatePicker(this, buttonStartDatePicker, endDate) { date ->
+            TaskUtils.showStartDatePicker(this, buttonStartDatePicker, startDate, endDate) { date ->
                 startDate = date
             }
         }
         buttonEndDatePicker.setOnClickListener {
-            TaskUtils.showEndDatePicker(this, buttonEndDatePicker, startDate) { date ->
+            TaskUtils.showEndDatePicker(this, buttonEndDatePicker, endDate, startDate) { date ->
                 endDate = date
             }
         }

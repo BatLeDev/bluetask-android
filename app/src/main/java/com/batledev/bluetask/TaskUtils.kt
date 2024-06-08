@@ -120,8 +120,9 @@ object TaskUtils {
      * @param endDate The end date of the task.
      * @param onDateSet The function to call when a date is selected.
      */
-    fun showStartDatePicker(context: Context, button: Button, endDate: Date?, onDateSet: (Date) -> Unit) {
+    fun showStartDatePicker(context: Context, button: Button, initialDate: Date?, endDate: Date?, onDateSet: (Date) -> Unit) {
         val calendar = Calendar.getInstance()
+        initialDate?.let { calendar.time = it }
         val datePickerDialog = DatePickerDialog(
             context,
             { _, year, monthOfYear, dayOfMonth ->
@@ -147,8 +148,9 @@ object TaskUtils {
      * @param startDate The start date of the task.
      * @param onDateSet The function to call when a date is selected.
      */
-    fun showEndDatePicker(context: Context, button: Button, startDate: Date?, onDateSet: (Date) -> Unit) {
+    fun showEndDatePicker(context: Context, button: Button, initialDate: Date?, startDate: Date?, onDateSet: (Date) -> Unit) {
         val calendar = Calendar.getInstance()
+        initialDate?.let { calendar.time = it }
         val datePickerDialog = DatePickerDialog(
             context,
             { _, year, monthOfYear, dayOfMonth ->
