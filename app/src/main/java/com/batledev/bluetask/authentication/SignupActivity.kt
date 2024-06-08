@@ -166,6 +166,9 @@ class SignupActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Show the main activity if the user is logged in
+     */
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
             startActivity(Intent(this, MainActivity::class.java))

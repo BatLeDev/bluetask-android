@@ -52,4 +52,5 @@
     <string name="about_us">A propos</string>
     <string name="edit_labels">Modifier les libellés</string>
     <string name="menu_bottom_section">Autres</string>
+    <string name="empty_task_description">Cette tâche n\'a pas de titre ni de description. Pour voir les taches contenant que des listes, aller directement sur la verison web de BlueTask</string>
 </resources>

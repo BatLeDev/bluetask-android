@@ -1,10 +1,13 @@
 package com.batledev.bluetask
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
 import android.widget.RadioGroup
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,25 +19,28 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.batledev.bluetask.authentication.UnloggedActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 
 class MainActivity : AppCompatActivity() {
+    // Firebase
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
+    // UI elements
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var taskAdapter: TaskAdapter
     private val tasks = mutableListOf<Task>()
 
     // Filters
     private var orderBy: String = "createAt"
-    private var priority: Int = -1
+    private var status: String = "active"
     private var label: String = ""
-
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
+    private var priority: Int = -1
 
     // Activity launcher for CreateTaskActivity and UpdateTaskActivity
     private val taskActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -43,6 +49,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Called when the activity is starting.
+     * - Initialize firebase and return if user is not logged in
+     * - Initialize the UI elements
+     * - Load tasks and labels
+     * - Setup listeners
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -96,16 +109,22 @@ class MainActivity : AppCompatActivity() {
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.allTasks -> {
-                    // Handle All Tasks action
+                    this.label = ""
+                    this.status = "active"
+                    loadTasks()
                 }
                 R.id.archive -> {
-                    // Handle Archive action
+                    this.label = ""
+                    this.status = "archived"
+                    loadTasks()
                 }
                 R.id.trash -> {
-                    // Handle Trash action
+                    this.label = ""
+                    this.status = "deleted"
+                    loadTasks()
                 }
                 R.id.editLabels -> {
-                    // Handle Edit Labels action
+                    showEditLabelsDialog()
                 }
                 R.id.logout -> {
                     firebaseAuth.signOut()
@@ -113,7 +132,8 @@ class MainActivity : AppCompatActivity() {
                     finish()
                 }
                 R.id.aboutUs -> {
-                    // Handle About Us action
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://bluetask.batledev.com/about"))
+                    startActivity(intent)
                 }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -121,44 +141,67 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Load labels in the navigation view
+     * - Get the labels from the user document
+     * - Clear existing labels
+     * - Add the labels to the navigation view
+     */
     private fun loadLabelsInNavigationView() {
         val userId = firebaseAuth.currentUser?.uid ?: return
         val userRef = firestore.collection("users").document(userId)
 
         // Get the labels from the user document
         userRef.get().addOnSuccessListener { document ->
-            val menu = navigationView.menu
-            val labelsMenu = menu.findItem(R.id.labels).subMenu
-            @Suppress("UNCHECKED_CAST") // It's safe to cast to List<Map<String, String>>
-            val labels = document["labels"] as List<Map<String, String>>
-            labelsMenu?.clear()  // Clear existing items
+            if (document != null && document.exists()) {
+                val menu = navigationView.menu
+                val labelsMenu = menu.findItem(R.id.labels).subMenu
+                labelsMenu?.clear()  // Clear existing labels
 
-            // Add labels to the navigation view
-            for (labelMap in labels) {
-                val title = labelMap["title"] ?: ""
-                val menuItem = labelsMenu?.add(Menu.NONE, View.generateViewId(), Menu.NONE, title)
-                menuItem?.setOnMenuItemClickListener {
-                    this.label = title
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    true
+                val labels = document.get("labels")
+                if (labels is List<*>) {
+                    for (labelMap in labels) {
+                        if (labelMap is Map<*, *>) {
+                            val title = labelMap["title"] as? String ?: ""
+                            val menuItem = labelsMenu?.add(Menu.NONE, View.generateViewId(), Menu.NONE, title)
+                            menuItem?.setOnMenuItemClickListener {
+                                this.label = title
+                                drawerLayout.closeDrawer(GravityCompat.START)
+                                loadTasks()
+                                true
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-
+    /**
+     * Load tasks
+     * - Show the swipe refresh layout
+     * - Get the tasks from Firestore and filter/order them
+     * - Clear existing tasks
+     * - Add the tasks to the list
+     * - Hide the swipe refresh layout
+     */
     private fun loadTasks() {
         swipeRefreshLayout.isRefreshing = true
 
         val userId = firebaseAuth.currentUser?.uid ?: return
         var tasksRef = firestore.collection("users").document(userId)
             .collection("tasks")
-            .whereEqualTo("status", "active")
             .orderBy(orderBy, Query.Direction.DESCENDING)
 
         // Apply filters
         if (priority != -1) {
             tasksRef = tasksRef.whereEqualTo("priority", priority)
+        }
+        if (label.isNotEmpty()) {
+            tasksRef = tasksRef.whereEqualTo("status", "active")
+            tasksRef = tasksRef.whereArrayContains("labels", label)
+        } else {
+            tasksRef = tasksRef.whereEqualTo("status", status)
         }
 
         tasksRef.get().addOnSuccessListener { documents ->
@@ -174,9 +217,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Show the filters dialog
+     * - Get the layout inflater
+     * - Pre-select the current filters
+     * - Build the dialog
+     * - Set the listener on the apply button
+     * -> Save the selected filters
+     * -> Refresh the list of tasks
+     */
     private fun showFiltersDialog() {
         // Get the layout inflater
         val dialogView = layoutInflater.inflate(R.layout.dialog_filters, null)
+
+        // Get UI elements
         val orderByGroup = dialogView.findViewById<RadioGroup>(R.id.orderByGroup)
         val priorityGroup = dialogView.findViewById<RadioGroup>(R.id.priorityGroup)
 
@@ -220,4 +274,97 @@ class MainActivity : AppCompatActivity() {
 
         dialog.show()
     }
+
+    /**
+     * Show the edit labels dialog
+     * - Get the layout inflater
+     * - Load existing labels
+     * - Add listeners to delete and add labels
+     */
+    private fun showEditLabelsDialog() {
+        // Get the layout inflater
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_labels, null)
+
+        // Get UI elements
+        val listViewLabels = dialogView.findViewById<ListView>(R.id.listViewLabels)
+        val editTextLabel = dialogView.findViewById<EditText>(R.id.editTextLabel)
+        val buttonAddLabel = dialogView.findViewById<Button>(R.id.buttonAddLabel)
+
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        val userRef = firestore.collection("users").document(userId)
+
+        val labelsAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf<String>())
+        listViewLabels.adapter = labelsAdapter
+
+        // Load existing labels
+        userRef.get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                val labels = document.get("labels")
+                if (labels is List<*>) {
+                    for (labelMap in labels) {
+                        if (labelMap is Map<*, *>) {
+                            val title = labelMap["title"] as? String ?: ""
+                            labelsAdapter.add(title)
+                        }
+                    }
+                }
+            }
+        }
+
+        // Delete label on item click
+        listViewLabels.setOnItemClickListener { _, _, position, _ ->
+            val label = labelsAdapter.getItem(position) ?: return@setOnItemClickListener
+            deleteLabel(label)
+            labelsAdapter.remove(label)
+            loadLabelsInNavigationView()
+        }
+
+        // Add new label
+        buttonAddLabel.setOnClickListener {
+            val newLabel = editTextLabel.text.toString().trim()
+            if (newLabel.isNotEmpty()) {
+                addLabel(newLabel)
+                labelsAdapter.add(newLabel)
+                editTextLabel.text.clear()
+                loadLabelsInNavigationView()
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Edit Labels")
+            .setView(dialogView)
+            .setPositiveButton(android.R.string.ok, null)
+            .create()
+            .show()
+    }
+
+    private fun deleteLabel(label: String) {
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        val userRef = firestore.collection("users").document(userId)
+
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(userRef)
+            @Suppress("UNCHECKED_CAST")
+            val labels = snapshot.get("labels") as List<Map<String, String>>
+            val updatedLabels = labels.filter { it["title"] != label }
+            transaction.update(userRef, "labels", updatedLabels)
+        }.addOnSuccessListener {
+            // Update tasks
+            val tasksRef = firestore.collection("users").document(userId).collection("tasks")
+            tasksRef.whereArrayContains("labels", label).get().addOnSuccessListener { documents ->
+                for (document in documents) {
+                    tasksRef.document(document.id).update("labels", FieldValue.arrayRemove(label))
+                }
+            }
+        }
+    }
+
+    private fun addLabel(newLabel: String) {
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        val userRef = firestore.collection("users").document(userId)
+
+        val newLabelMap = mapOf("title" to newLabel, "icon" to "mdi-tag-outline")
+        userRef.update("labels", FieldValue.arrayUnion(newLabelMap))
+    }
+
 }

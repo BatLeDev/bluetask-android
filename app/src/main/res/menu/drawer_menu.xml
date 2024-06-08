@@ -14,11 +14,11 @@
         android:id="@+id/labels"
         android:title="@string/labels">
         <menu>
-            <item
-                android:id="@+id/editLabels"
-                android:title="@string/edit_labels" />
         </menu>
     </item>
+    <item
+        android:id="@+id/editLabels"
+        android:title="@string/edit_labels" />
 
     <item
         android:title="@string/menu_bottom_section">

@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    // Activity result launcher for Google sign in
+    // Activity result launcher for Google login
     private val loginLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -147,6 +147,9 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Show the main activity if the user is logged in
+     */
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
             startActivity(Intent(this, MainActivity::class.java))

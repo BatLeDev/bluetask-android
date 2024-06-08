@@ -3,6 +3,7 @@ package com.batledev.bluetask
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -21,21 +22,28 @@ class TaskAdapter(context: Context, tasks: List<Task>, private val taskActivityL
         val titleTextView = view.findViewById<TextView>(R.id.taskTitle)
         val descriptionTextView = view.findViewById<TextView>(R.id.taskDescription)
 
-
         // Set the title and description of the task
         // If the title or description is null or empty, hide the text view
-        if (task!!.title.isEmpty()) {
+        if (task!!.title.isEmpty() && task.description.isEmpty()) {
             titleTextView.visibility = View.GONE
-        } else {
-            titleTextView.visibility = View.VISIBLE
-            titleTextView.text = task.title
-        }
-
-        if (task.description.isEmpty()) {
-            descriptionTextView.visibility = View.GONE
-        } else {
             descriptionTextView.visibility = View.VISIBLE
-            descriptionTextView.text = task.description
+            descriptionTextView.text = context.getString(R.string.empty_task_description)
+            descriptionTextView.setTypeface(null, Typeface.ITALIC)
+        } else {
+            if (task.title.isEmpty()) {
+                titleTextView.visibility = View.GONE
+            } else {
+                titleTextView.visibility = View.VISIBLE
+                titleTextView.text = task.title
+            }
+
+            if (task.description.isEmpty()) {
+                descriptionTextView.visibility = View.GONE
+            } else {
+                descriptionTextView.visibility = View.VISIBLE
+                descriptionTextView.text = task.description
+                descriptionTextView.setTypeface(null, Typeface.NORMAL)
+            }
         }
 
         if (!task.color.isNullOrEmpty()) {
