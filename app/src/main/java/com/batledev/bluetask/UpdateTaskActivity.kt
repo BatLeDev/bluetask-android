@@ -1,11 +1,7 @@
 package com.batledev.bluetask
 
-import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
@@ -15,10 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import com.skydoves.colorpickerview.ColorPickerDialog
-import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -79,31 +72,29 @@ class UpdateTaskActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
 
         // Set up click listeners
-        buttonColorPicker.setOnClickListener { showColorPicker() }
-        buttonStartDatePicker.setOnClickListener { showStartDatePicker() }
-        buttonEndDatePicker.setOnClickListener { showEndDatePicker() }
+        buttonColorPicker.setOnClickListener {
+            TaskUtils.showColorPicker(this, buttonColorPicker) { color ->
+                taskColor = color
+            }
+        }
+        buttonStartDatePicker.setOnClickListener {
+            TaskUtils.showStartDatePicker(this, buttonStartDatePicker, endDate) { date ->
+                startDate = date
+            }
+        }
+        buttonEndDatePicker.setOnClickListener {
+            TaskUtils.showEndDatePicker(this, buttonEndDatePicker, startDate) { date ->
+                endDate = date
+            }
+        }
         buttonUpdate.setOnClickListener { updateTask() }
         buttonDelete.setOnClickListener { deleteTask() }
         buttonArchive.setOnClickListener { archiveTask() }
 
         // Set up priority spinner
         val priorities = resources.getStringArray(R.array.priorities)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, priorities)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerPriority.adapter = adapter
-        spinnerPriority.setSelection(0)
-        spinnerPriority.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                priority = when (position) {
-                    1 -> 2
-                    2 -> 1
-                    3 -> 0
-                    else -> -1
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                priority = -1
-            }
+        TaskUtils.setupPrioritySpinner(this, spinnerPriority, priorities) { priority ->
+            this.priority = priority
         }
 
         // Get taskId from intent and load task data
@@ -155,75 +146,6 @@ class UpdateTaskActivity : AppCompatActivity() {
                     else resources.getString(R.string.archive)
             }
         }
-    }
-
-    /**
-     * Show the start date picker dialog.
-     */
-    private fun showStartDatePicker() {
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(
-            this,
-            { _, year, monthOfYear, dayOfMonth ->
-                calendar.set(year, monthOfYear, dayOfMonth)
-                startDate = calendar.time
-                buttonStartDatePicker.text =
-                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(startDate!!)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        if (endDate != null) {
-            datePickerDialog.datePicker.maxDate = endDate!!.time
-        }
-        datePickerDialog.show()
-    }
-
-    /**
-     * Show the end date picker dialog.
-     */
-    private fun showEndDatePicker() {
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(
-            this,
-            { _, year, monthOfYear, dayOfMonth ->
-                calendar.set(year, monthOfYear, dayOfMonth)
-                endDate = calendar.time
-                buttonEndDatePicker.text =
-                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(endDate!!)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        if (startDate != null) {
-            datePickerDialog.datePicker.minDate = startDate!!.time
-        }
-        datePickerDialog.show()
-    }
-
-    /**
-     * Show the color picker dialog.
-     */
-    private fun showColorPicker() {
-        ColorPickerDialog.Builder(this)
-            .setTitle("Pick a color")
-            .setPreferenceName("MyColorPickerDialog")
-            .setPositiveButton("Confirm", ColorEnvelopeListener { envelope, _ ->
-                val selectedColor = envelope.color
-                taskColor = "#" + envelope.hexCode.substring(2, 8)
-                buttonColorPicker.setBackgroundColor(selectedColor)
-            })
-            .setNegativeButton("Clear") { dialogInterface, _ ->
-                taskColor = null
-                buttonColorPicker.setBackgroundResource(android.R.drawable.btn_default)
-                dialogInterface.dismiss()
-            }
-            .attachAlphaSlideBar(false)
-            .attachBrightnessSlideBar(true)
-            .setBottomSpace(12)
-            .show()
     }
 
     /**

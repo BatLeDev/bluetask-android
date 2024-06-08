@@ -43,11 +43,11 @@ class LoginActivity : AppCompatActivity() {
 
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance()
-        val googleLauncher = registerGoogleSignInLauncher(this)
+        val googleLauncher = TaskUtils.registerGoogleSignInLauncher(this)
 
         // Set up click listeners
         loginBtn.setOnClickListener { loginUser() }
-        loginGoogleBtn.setOnClickListener { googleAuth(this, googleLauncher) }
+        loginGoogleBtn.setOnClickListener { TaskUtils.googleAuth(this, googleLauncher) }
         noAccountBtn.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
             finish()
@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    updateUI(this, firebaseAuth.currentUser)
+                    TaskUtils.updateUI(this, firebaseAuth.currentUser)
                 } else {
                     Toast.makeText(
                         baseContext,
