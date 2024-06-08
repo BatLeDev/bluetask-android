@@ -11,8 +11,19 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.batledev.bluetask.R
 
+/**
+ * This activity is the first activity that the user sees when they open the app and they are not
+ * logged in. It contains two buttons: one to log in and one to sign up. It also contains the logo,
+ * the app name and a text that says "Do your tasks quickly and easy".
+ */
 class UnloggedActivity : AppCompatActivity() {
 
+    /**
+     * This function is called when the activity is created.
+     * It sets up the click listeners for the login and sign up buttons.
+     * It defines colors for the words "quickly" and "easy" in the text
+     * "Do your tasks quickly and easy".
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_unlogged)
