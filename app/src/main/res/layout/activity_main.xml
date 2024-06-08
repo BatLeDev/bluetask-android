@@ -7,12 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Main Content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginTop="8dp">
 
+        <!-- Top bar -->
         <LinearLayout
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
@@ -37,6 +39,7 @@
 
         </LinearLayout>
 
+        <!-- Tasks List -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
@@ -52,6 +55,7 @@
                 android:dividerHeight="10dp" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+        <!-- Create Task Button -->
         <Button
             android:id="@+id/createTaskButton"
             android:layout_width="match_parent"
@@ -61,6 +65,7 @@
             android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 
+    <!-- Navigation Drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="wrap_content"
