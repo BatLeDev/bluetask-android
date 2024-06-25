@@ -44,16 +44,7 @@ I decided to expand on this project to gain more experience in android developme
 
 2. **Environment Variables:**
 
-- Create a .env file in the project root with the following variables (given by Firebase)
-
-```bash
-VUE_APP_FIREBASE_API_KEY=your_api_key
-VUE_APP_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
-VUE_APP_FIREBASE_PROJECT_ID=your_project_id
-VUE_APP_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
-VUE_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-VUE_APP_FIREBASE_APP_ID=your_app_id
-```
+- Create a .google-services.json file in the app folder with variables given by Firebase
 
 3. **Run in Development Mode:**
 
